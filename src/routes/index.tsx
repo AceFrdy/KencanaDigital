@@ -377,7 +377,8 @@ function HoneycombServices({ services }: { services: { icon: React.ElementType; 
                     className="w-full h-full grid place-items-center"
                     style={{
                       background: "color-mix(in oklab, white 82%, var(--champagne))",
-                      boxShadow: "inset 0 0 0 1px color-mix(in oklab, var(--rose-gold) 20%, transparent)",
+                      boxShadow:
+                        "inset 0 0 0 2px var(--rose-gold), inset 0 0 0 4px color-mix(in oklab, white 90%, var(--champagne)), inset 0 0 0 5px color-mix(in oklab, var(--rose-gold-deep) 55%, transparent)",
                     }}
                   >
                     <div className="flex flex-col items-center gap-1.5 sm:gap-2 px-2">
