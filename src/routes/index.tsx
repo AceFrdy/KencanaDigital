@@ -337,24 +337,93 @@ function Services() {
       intro="From first concept to continuous evolution, every discipline required to shape a category-defining digital product lives inside the atelier."
       className="bg-pearl/60"
     >
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {services.map((s, i) => (
-          <Reveal key={s.t} delay={(i % 4) * 0.06}>
-            <div className="card-luxury p-8 h-full flex flex-col">
-              <div className="w-11 h-11 rounded-full grid place-items-center mb-8"
-                   style={{ background: "color-mix(in oklab, var(--champagne) 55%, white)" }}>
-                <s.icon className="w-[18px] h-[18px] text-rose-gold-deep" />
-              </div>
-              <h3 className="text-display text-[1.35rem] text-charcoal leading-tight">{s.t}</h3>
-              <p className="mt-4 text-[0.92rem] leading-[1.7] text-charcoal/65 flex-1">{s.d}</p>
-              <div className="mt-8 flex items-center gap-2 text-[0.7rem] uppercase tracking-[0.24em] text-rose-gold-deep">
-                Learn more <ArrowUpRight className="w-3.5 h-3.5" />
-              </div>
-            </div>
-          </Reveal>
+      <HoneycombServices services={services} />
+    </Section>
+  );
+}
+
+function HoneycombServices({ services }: { services: { icon: React.ElementType; t: string; d: string }[] }) {
+  const [active, setActive] = useState(0);
+  const rows = [services.slice(0, 3), services.slice(3, 5), services.slice(5, 8)];
+  const indexOffsets = [0, 3, 5];
+  const current = services[active];
+  const Icon = current.icon;
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+      {/* Honeycomb */}
+      <div className="lg:col-span-7 flex flex-col items-center">
+        {rows.map((row, ri) => (
+          <div
+            key={ri}
+            className={`flex justify-center gap-3 sm:gap-4 ${ri > 0 ? "-mt-6 sm:-mt-8" : ""}`}
+          >
+            {row.map((s, ci) => {
+              const idx = indexOffsets[ri] + ci;
+              const isActive = idx === active;
+              const HexIcon = s.icon;
+              return (
+                <motion.button
+                  key={s.t}
+                  onMouseEnter={() => setActive(idx)}
+                  onFocus={() => setActive(idx)}
+                  onClick={() => setActive(idx)}
+                  whileHover={{ scale: 1.04 }}
+                  transition={{ duration: 0.35, ease: [0.2, 0.7, 0.2, 1] }}
+                  className="hex-shape w-[110px] h-[126px] sm:w-[140px] sm:h-[160px] md:w-[160px] md:h-[184px] grid place-items-center text-center px-3 focus:outline-none"
+                  style={{
+                    background: isActive
+                      ? "linear-gradient(160deg, var(--rose-gold), var(--rose-gold-deep))"
+                      : "color-mix(in oklab, white 78%, var(--champagne))",
+                    color: isActive ? "var(--ivory)" : "var(--charcoal)",
+                    boxShadow: isActive
+                      ? "0 24px 40px -18px oklch(0.48 0.058 15 / 0.55)"
+                      : "0 8px 20px -12px oklch(0.35 0.06 30 / 0.18)",
+                  }}
+                >
+                  <div className="flex flex-col items-center gap-2">
+                    <HexIcon
+                      className="w-5 h-5 sm:w-6 sm:h-6"
+                      style={{ color: isActive ? "var(--ivory)" : "var(--rose-gold-deep)" }}
+                    />
+                    <span className="text-[0.62rem] sm:text-[0.68rem] uppercase tracking-[0.14em] leading-tight font-medium max-w-[100px]">
+                      {s.t.split(" ").slice(0, 2).join(" ")}
+                    </span>
+                  </div>
+                </motion.button>
+              );
+            })}
+          </div>
         ))}
       </div>
-    </Section>
+
+      {/* Detail panel */}
+      <div className="lg:col-span-5">
+        <motion.div
+          key={active}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: [0.2, 0.7, 0.2, 1] }}
+          className="card-luxury p-8 md:p-10"
+        >
+          <div
+            className="w-12 h-12 rounded-full grid place-items-center mb-6"
+            style={{ background: "color-mix(in oklab, var(--champagne) 55%, white)" }}
+          >
+            <Icon className="w-5 h-5 text-rose-gold-deep" />
+          </div>
+          <div className="eyebrow mb-3">Discipline {String(active + 1).padStart(2, "0")}</div>
+          <h3 className="text-display text-[1.75rem] md:text-[2rem] text-charcoal leading-tight">
+            {current.t}
+          </h3>
+          <div className="hairline my-5" />
+          <p className="text-[0.98rem] leading-[1.75] text-charcoal/70">{current.d}</p>
+          <div className="mt-8 flex items-center gap-2 text-[0.72rem] uppercase tracking-[0.24em] text-rose-gold-deep">
+            Explore discipline <ArrowUpRight className="w-3.5 h-3.5" />
+          </div>
+        </motion.div>
+      </div>
+    </div>
   );
 }
 
