@@ -343,85 +343,55 @@ function Services() {
 }
 
 function HoneycombServices({ services }: { services: { icon: React.ElementType; t: string; d: string }[] }) {
-  const [active, setActive] = useState(0);
+  // 3 - 2 - 3 honeycomb, with a small random horizontal offset per hex
   const rows = [services.slice(0, 3), services.slice(3, 5), services.slice(5, 8)];
   const indexOffsets = [0, 3, 5];
-  const current = services[active];
-  const Icon = current.icon;
+  // small deterministic "acak" offsets in px (kept subtle, ±14px)
+  const jitter = [-10, 8, -6, 12, -12, 6, -8, 10];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-      {/* Honeycomb */}
-      <div className="lg:col-span-7 flex flex-col items-center">
+    <div className="mx-auto w-full max-w-3xl">
+      <div className="flex flex-col items-center">
         {rows.map((row, ri) => (
           <div
             key={ri}
-            className={`flex justify-center gap-3 sm:gap-4 ${ri > 0 ? "-mt-6 sm:-mt-8" : ""}`}
+            className={`flex justify-center gap-2 sm:gap-3 md:gap-4 ${
+              ri > 0 ? "-mt-5 sm:-mt-7 md:-mt-9" : ""
+            }`}
           >
             {row.map((s, ci) => {
               const idx = indexOffsets[ri] + ci;
-              const isActive = idx === active;
               const HexIcon = s.icon;
               return (
-                <motion.button
+                <motion.div
                   key={s.t}
-                  onMouseEnter={() => setActive(idx)}
-                  onFocus={() => setActive(idx)}
-                  onClick={() => setActive(idx)}
-                  whileHover={{ scale: 1.04 }}
-                  transition={{ duration: 0.35, ease: [0.2, 0.7, 0.2, 1] }}
-                  className="hex-shape w-[110px] h-[126px] sm:w-[140px] sm:h-[160px] md:w-[160px] md:h-[184px] grid place-items-center text-center px-3 focus:outline-none"
-                  style={{
-                    background: isActive
-                      ? "linear-gradient(160deg, var(--rose-gold), var(--rose-gold-deep))"
-                      : "color-mix(in oklab, white 78%, var(--champagne))",
-                    color: isActive ? "var(--ivory)" : "var(--charcoal)",
-                    boxShadow: isActive
-                      ? "0 24px 40px -18px oklch(0.48 0.058 15 / 0.55)"
-                      : "0 8px 20px -12px oklch(0.35 0.06 30 / 0.18)",
-                  }}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-60px" }}
+                  transition={{ duration: 0.55, delay: idx * 0.05, ease: [0.2, 0.7, 0.2, 1] }}
+                  whileHover={{ y: -4, scale: 1.03 }}
+                  style={{ transform: `translateX(${jitter[idx]}px)` }}
+                  className="hex-shape w-[92px] h-[106px] sm:w-[120px] sm:h-[138px] md:w-[150px] md:h-[172px] grid place-items-center text-center px-2 cursor-default"
                 >
-                  <div className="flex flex-col items-center gap-2">
-                    <HexIcon
-                      className="w-5 h-5 sm:w-6 sm:h-6"
-                      style={{ color: isActive ? "var(--ivory)" : "var(--rose-gold-deep)" }}
-                    />
-                    <span className="text-[0.62rem] sm:text-[0.68rem] uppercase tracking-[0.14em] leading-tight font-medium max-w-[100px]">
-                      {s.t.split(" ").slice(0, 2).join(" ")}
-                    </span>
+                  <div
+                    className="w-full h-full grid place-items-center"
+                    style={{
+                      background: "color-mix(in oklab, white 82%, var(--champagne))",
+                      boxShadow: "inset 0 0 0 1px color-mix(in oklab, var(--rose-gold) 20%, transparent)",
+                    }}
+                  >
+                    <div className="flex flex-col items-center gap-1.5 sm:gap-2 px-2">
+                      <HexIcon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-rose-gold-deep" />
+                      <span className="text-[0.58rem] sm:text-[0.65rem] md:text-[0.7rem] uppercase tracking-[0.12em] leading-tight text-charcoal font-medium max-w-[80px] sm:max-w-[100px]">
+                        {s.t.split(/\s+/).slice(0, 2).join(" ")}
+                      </span>
+                    </div>
                   </div>
-                </motion.button>
+                </motion.div>
               );
             })}
           </div>
         ))}
-      </div>
-
-      {/* Detail panel */}
-      <div className="lg:col-span-5">
-        <motion.div
-          key={active}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45, ease: [0.2, 0.7, 0.2, 1] }}
-          className="card-luxury p-8 md:p-10"
-        >
-          <div
-            className="w-12 h-12 rounded-full grid place-items-center mb-6"
-            style={{ background: "color-mix(in oklab, var(--champagne) 55%, white)" }}
-          >
-            <Icon className="w-5 h-5 text-rose-gold-deep" />
-          </div>
-          <div className="eyebrow mb-3">Discipline {String(active + 1).padStart(2, "0")}</div>
-          <h3 className="text-display text-[1.75rem] md:text-[2rem] text-charcoal leading-tight">
-            {current.t}
-          </h3>
-          <div className="hairline my-5" />
-          <p className="text-[0.98rem] leading-[1.75] text-charcoal/70">{current.d}</p>
-          <div className="mt-8 flex items-center gap-2 text-[0.72rem] uppercase tracking-[0.24em] text-rose-gold-deep">
-            Explore discipline <ArrowUpRight className="w-3.5 h-3.5" />
-          </div>
-        </motion.div>
       </div>
     </div>
   );
