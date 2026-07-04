@@ -371,16 +371,22 @@ function HoneycombServices({ services }: { services: { icon: React.ElementType; 
                   transition={{ duration: 0.55, delay: idx * 0.05, ease: [0.2, 0.7, 0.2, 1] }}
                   whileHover={{ y: -4, scale: 1.03 }}
                   style={{ transform: `translateX(${jitter[idx]}px)` }}
-                  className="hex-shape w-[92px] h-[106px] sm:w-[120px] sm:h-[138px] md:w-[150px] md:h-[172px] grid place-items-center text-center px-2 cursor-default"
+                  className="relative w-[92px] h-[106px] sm:w-[120px] sm:h-[138px] md:w-[150px] md:h-[172px] cursor-default"
                 >
-                  <div
-                    className="w-full h-full grid place-items-center"
-                    style={{
-                      background: "color-mix(in oklab, white 82%, var(--champagne))",
-                      boxShadow:
-                        "inset 0 0 0 2px var(--rose-gold), inset 0 0 0 4px color-mix(in oklab, white 90%, var(--champagne)), inset 0 0 0 5px color-mix(in oklab, var(--rose-gold-deep) 55%, transparent)",
-                    }}
+                  <svg
+                    viewBox="0 0 100 115"
+                    preserveAspectRatio="none"
+                    className="absolute inset-0 w-full h-full"
                   >
+                    <polygon
+                      points="50,2 96,28.75 96,86.25 50,113 4,86.25 4,28.75"
+                      fill="color-mix(in oklab, white 82%, var(--champagne))"
+                      stroke="var(--rose-gold)"
+                      strokeWidth="2.5"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 grid place-items-center text-center px-2">
                     <div className="flex flex-col items-center gap-1.5 sm:gap-2 px-2">
                       <HexIcon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-rose-gold-deep" />
                       <span className="text-[0.58rem] sm:text-[0.65rem] md:text-[0.7rem] uppercase tracking-[0.12em] leading-tight text-charcoal font-medium max-w-[80px] sm:max-w-[100px]">
