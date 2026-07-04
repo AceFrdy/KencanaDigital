@@ -198,6 +198,10 @@
   border: 1px solid color-mix(in oklab, white 40%, var(--warm-border));
 }
 
+@utility hex-shape {
+  clip-path: polygon(25% 4%, 75% 4%, 98% 50%, 75% 96%, 25% 96%, 2% 50%);
+}
+
 @utility rose-divider {
   width: 40px;
   height: 1px;
