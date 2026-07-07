@@ -248,7 +248,15 @@ function Section({
 }
 
 /* ---------- Reveal ---------- */
-function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+function Reveal({
+  children,
+  delay = 0,
+  className = "",
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   return (
@@ -257,6 +265,7 @@ function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
       initial={{ opacity: 0, y: 24 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.8, delay, ease: [0.2, 0.7, 0.2, 1] }}
+      className={className}
     >
       {children}
     </motion.div>
@@ -278,8 +287,8 @@ function About() {
       title={<>An atelier for <em className="text-serif italic text-rose-gold-deep">brands</em> that value quiet excellence.</>}
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
-        <Reveal>
-          <div className="lg:col-span-5 relative">
+        <Reveal className="lg:col-span-5">
+          <div className="relative">
             <div className="rounded-[1.75rem] overflow-hidden">
               <img src={aboutImg} alt="Design studio interior"
                    width={1200} height={1400} loading="lazy"
