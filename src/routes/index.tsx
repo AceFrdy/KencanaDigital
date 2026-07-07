@@ -395,11 +395,11 @@ function HoneycombServices({ services }: { services: { icon: React.ElementType; 
                       strokeLinejoin="round"
                     />
                   </svg>
-                  <div className="absolute inset-0 grid place-items-center text-center px-2">
-                    <div className="flex flex-col items-center gap-1.5 sm:gap-2 px-2">
-                      <HexIcon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-rose-gold-deep" />
-                      <span className="text-[0.58rem] sm:text-[0.65rem] md:text-[0.7rem] uppercase tracking-[0.12em] leading-tight text-charcoal font-medium max-w-[80px] sm:max-w-[100px]">
-                        {s.t.split(/\s+/).slice(0, 2).join(" ")}
+                  <div className="absolute inset-0 grid place-items-center text-center">
+                    <div className="flex flex-col items-center gap-1 sm:gap-1.5 md:gap-2 w-[78%]">
+                      <HexIcon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-rose-gold-deep shrink-0" />
+                      <span className="text-[0.5rem] sm:text-[0.6rem] md:text-[0.7rem] uppercase tracking-[0.06em] sm:tracking-[0.1em] leading-[1.15] text-charcoal font-medium break-words hyphens-auto">
+                        {s.t}
                       </span>
                     </div>
                   </div>
