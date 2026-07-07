@@ -352,62 +352,66 @@ function Services() {
 }
 
 function HoneycombServices({ services }: { services: { icon: React.ElementType; t: string; d: string }[] }) {
-  // 3 - 2 - 3 honeycomb, with a small random horizontal offset per hex
-  const rows = [services.slice(0, 3), services.slice(3, 5), services.slice(5, 8)];
-  const indexOffsets = [0, 3, 5];
-  // small deterministic "acak" offsets in px (kept subtle, ±14px)
-  const jitter = [-10, 8, -6, 12, -12, 6, -8, 10];
+  // Compact octagon grid — 2 cols on mobile, 4 cols on desktop
+  // Subtle vertical stagger on alternating columns for an "acak" rhythm
+  const stagger = ["0px", "14px", "0px", "14px"];
 
   return (
-    <div className="mx-auto w-full max-w-3xl">
-      <div className="flex flex-col items-center">
-        {rows.map((row, ri) => (
-          <div
-            key={ri}
-            className={`flex justify-center gap-2 sm:gap-3 md:gap-4 ${
-              ri > 0 ? "-mt-5 sm:-mt-7 md:-mt-9" : ""
-            }`}
-          >
-            {row.map((s, ci) => {
-              const idx = indexOffsets[ri] + ci;
-              const HexIcon = s.icon;
-              return (
-                <motion.div
-                  key={s.t}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-60px" }}
-                  transition={{ duration: 0.55, delay: idx * 0.05, ease: [0.2, 0.7, 0.2, 1] }}
-                  whileHover={{ y: -4, scale: 1.03 }}
-                  style={{ transform: `translateX(${jitter[idx]}px)` }}
-                  className="relative w-[92px] h-[106px] sm:w-[120px] sm:h-[138px] md:w-[150px] md:h-[172px] cursor-default"
-                >
-                  <svg
-                    viewBox="0 0 100 115"
-                    preserveAspectRatio="none"
-                    className="absolute inset-0 w-full h-full"
-                  >
-                    <polygon
-                      points="50,2 96,28.75 96,86.25 50,113 4,86.25 4,28.75"
-                      fill="color-mix(in oklab, white 82%, var(--champagne))"
-                      stroke="var(--rose-gold)"
-                      strokeWidth="2.5"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  <div className="absolute inset-0 grid place-items-center text-center">
-                    <div className="flex flex-col items-center gap-1 sm:gap-1.5 md:gap-2 w-[78%]">
-                      <HexIcon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-rose-gold-deep shrink-0" />
-                      <span className="text-[0.5rem] sm:text-[0.6rem] md:text-[0.7rem] uppercase tracking-[0.06em] sm:tracking-[0.1em] leading-[1.15] text-charcoal font-medium break-words hyphens-auto">
-                        {s.t}
-                      </span>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        ))}
+    <div className="mx-auto w-full max-w-4xl">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-3 gap-y-4 sm:gap-x-5 sm:gap-y-6 px-2">
+        {services.map((s, idx) => {
+          const OctIcon = s.icon;
+          const col = idx % 4;
+          return (
+            <motion.div
+              key={s.t}
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.55, delay: idx * 0.05, ease: [0.2, 0.7, 0.2, 1] }}
+              whileHover={{ y: -4, scale: 1.04 }}
+              style={{ transform: `translateY(${stagger[col]})` }}
+              className="group relative aspect-square w-full max-w-[150px] mx-auto cursor-default"
+            >
+              <svg
+                viewBox="0 0 100 100"
+                preserveAspectRatio="none"
+                className="absolute inset-0 w-full h-full drop-shadow-[0_10px_24px_oklch(0.48_0.058_15/0.12)] transition-all duration-500 group-hover:drop-shadow-[0_18px_36px_oklch(0.48_0.058_15/0.22)]"
+              >
+                <defs>
+                  <linearGradient id={`oct-fill-${idx}`} x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="white" />
+                    <stop offset="100%" stopColor="color-mix(in oklab, white 70%, var(--champagne))" />
+                  </linearGradient>
+                </defs>
+                <polygon
+                  points="29.3,2 70.7,2 98,29.3 98,70.7 70.7,98 29.3,98 2,70.7 2,29.3"
+                  fill={`url(#oct-fill-${idx})`}
+                  stroke="var(--rose-gold)"
+                  strokeWidth="1.6"
+                  strokeLinejoin="miter"
+                  className="transition-[stroke] duration-500 group-hover:[stroke:var(--rose-gold-deep)]"
+                />
+                <polygon
+                  points="29.3,2 70.7,2 98,29.3 98,70.7 70.7,98 29.3,98 2,70.7 2,29.3"
+                  fill="none"
+                  stroke="color-mix(in oklab, var(--gold-soft) 60%, transparent)"
+                  strokeWidth="0.5"
+                  strokeLinejoin="miter"
+                  transform="scale(0.88) translate(6.8 6.8)"
+                />
+              </svg>
+              <div className="absolute inset-0 grid place-items-center text-center px-3">
+                <div className="flex flex-col items-center gap-1.5">
+                  <OctIcon className="w-4 h-4 sm:w-[18px] sm:h-[18px] md:w-5 md:h-5 text-rose-gold-deep shrink-0 transition-transform duration-500 group-hover:scale-110" />
+                  <span className="text-[0.52rem] sm:text-[0.58rem] md:text-[0.65rem] uppercase tracking-[0.08em] sm:tracking-[0.12em] leading-[1.2] text-charcoal font-medium break-words hyphens-auto">
+                    {s.t}
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
     </div>
   );
