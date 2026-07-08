@@ -352,66 +352,123 @@ function Services() {
 }
 
 function HoneycombServices({ services }: { services: { icon: React.ElementType; t: string; d: string }[] }) {
-  // 3 - 2 - 3 honeycomb, with a small random horizontal offset per hex
-  const rows = [services.slice(0, 3), services.slice(3, 5), services.slice(5, 8)];
-  const indexOffsets = [0, 3, 5];
-  // small deterministic "acak" offsets in px (kept subtle, ±14px)
-  const jitter = [-10, 8, -6, 12, -12, 6, -8, 10];
+  // pointy-top hex geometry in viewBox units
+  const W = 100;
+  const H = 115.47; // W * 2/sqrt(3)
+  const VSTEP = H * 0.75;
+
+  // Clustered honeycomb layout inspired by reference:
+  // - a dense main cluster on the left
+  // - a small cluster on the top-right
+  // - a couple of stragglers on the bottom
+  // s = service index (filled hex). deco = outline-only decorative hex.
+  type Cell = { c: number; r: number; s?: number; deco?: boolean };
+  const cells: Cell[] = [
+    // main cluster (left)
+    { c: 0.5, r: 0, deco: true },
+    { c: 1.5, r: 0, s: 0 },
+    { c: 2.5, r: 0, deco: true },
+    { c: 0, r: 1, deco: true },
+    { c: 1, r: 1, s: 1 },
+    { c: 2, r: 1, s: 2 },
+    { c: 3, r: 1, s: 3 },
+    { c: 0.5, r: 2, s: 4 },
+    { c: 1.5, r: 2, deco: true },
+    { c: 2.5, r: 2, s: 5 },
+    { c: 3.5, r: 2, deco: true },
+    // top-right cluster
+    { c: 5.2, r: 0, s: 6 },
+    { c: 5.7, r: 1, deco: true },
+    { c: 6.2, r: 0, deco: true },
+    { c: 4.7, r: 1, deco: true },
+    // bottom stragglers
+    { c: 2, r: 3, deco: true },
+    { c: 3, r: 3, s: 7 },
+  ];
+
+  const xs = cells.map((c) => c.c * W);
+  const ys = cells.map((c) => c.r * VSTEP);
+  const minX = Math.min(...xs) - 4;
+  const maxX = Math.max(...xs) + W + 4;
+  const minY = Math.min(...ys) - 4;
+  const maxY = Math.max(...ys) + H + 4;
+  const vbW = maxX - minX;
+  const vbH = maxY - minY;
 
   return (
-    <div className="mx-auto w-full max-w-3xl">
-      <div className="flex flex-col items-center">
-        {rows.map((row, ri) => (
-          <div
-            key={ri}
-            className={`flex justify-center gap-2 sm:gap-3 md:gap-4 ${
-              ri > 0 ? "-mt-5 sm:-mt-7 md:-mt-9" : ""
-            }`}
-          >
-            {row.map((s, ci) => {
-              const idx = indexOffsets[ri] + ci;
-              const HexIcon = s.icon;
-              return (
-                <motion.div
-                  key={s.t}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-60px" }}
-                  transition={{ duration: 0.55, delay: idx * 0.05, ease: [0.2, 0.7, 0.2, 1] }}
-                  whileHover={{ y: -4, scale: 1.03 }}
-                  style={{ transform: `translateX(${jitter[idx]}px)` }}
-                  className="relative w-[92px] h-[106px] sm:w-[120px] sm:h-[138px] md:w-[150px] md:h-[172px] cursor-default"
-                >
-                  <svg
-                    viewBox="0 0 100 115"
-                    preserveAspectRatio="none"
-                    className="absolute inset-0 w-full h-full"
-                  >
-                    <polygon
-                      points="50,2 96,28.75 96,86.25 50,113 4,86.25 4,28.75"
-                      fill="color-mix(in oklab, white 82%, var(--champagne))"
-                      stroke="var(--rose-gold)"
-                      strokeWidth="2.5"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  <div className="absolute inset-0 grid place-items-center text-center">
-                    <div className="flex flex-col items-center gap-1 sm:gap-1.5 md:gap-2 w-[78%]">
-                      <HexIcon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-rose-gold-deep shrink-0" />
-                      <span className="text-[0.5rem] sm:text-[0.6rem] md:text-[0.7rem] uppercase tracking-[0.06em] sm:tracking-[0.1em] leading-[1.15] text-charcoal font-medium break-words hyphens-auto">
-                        {s.t}
-                      </span>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        ))}
+    <div className="mx-auto w-full max-w-4xl">
+      <div className="relative w-full" style={{ aspectRatio: `${vbW} / ${vbH}` }}>
+        {cells.map((cell, i) => {
+          const x = cell.c * W - minX;
+          const y = cell.r * VSTEP - minY;
+          const leftPct = (x / vbW) * 100;
+          const topPct = (y / vbH) * 100;
+          const wPct = (W / vbW) * 100;
+          const hPct = (H / vbH) * 100;
+
+          if (cell.deco) {
+            return (
+              <motion.div
+                key={`d-${i}`}
+                initial={{ opacity: 0, scale: 0.85 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ duration: 0.5, delay: i * 0.03, ease: [0.2, 0.7, 0.2, 1] }}
+                className="absolute pointer-events-none"
+                style={{ left: `${leftPct}%`, top: `${topPct}%`, width: `${wPct}%`, height: `${hPct}%` }}
+              >
+                <svg viewBox="0 0 100 115.47" preserveAspectRatio="none" className="w-full h-full">
+                  <polygon
+                    points="50,2 96,28.75 96,86.72 50,113.47 4,86.72 4,28.75"
+                    fill="transparent"
+                    stroke="var(--rose-gold)"
+                    strokeWidth="2"
+                    strokeLinejoin="round"
+                    opacity="0.55"
+                  />
+                </svg>
+              </motion.div>
+            );
+          }
+
+          const s = services[cell.s!];
+          const HexIcon = s.icon;
+          return (
+            <motion.div
+              key={s.t}
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.55, delay: i * 0.04, ease: [0.2, 0.7, 0.2, 1] }}
+              whileHover={{ y: -4, scale: 1.04 }}
+              className="absolute cursor-default"
+              style={{ left: `${leftPct}%`, top: `${topPct}%`, width: `${wPct}%`, height: `${hPct}%` }}
+            >
+              <svg viewBox="0 0 100 115.47" preserveAspectRatio="none" className="absolute inset-0 w-full h-full">
+                <polygon
+                  points="50,2 96,28.75 96,86.72 50,113.47 4,86.72 4,28.75"
+                  fill="color-mix(in oklab, white 82%, var(--champagne))"
+                  stroke="var(--rose-gold)"
+                  strokeWidth="2.5"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <div className="absolute inset-0 grid place-items-center text-center">
+                <div className="flex flex-col items-center gap-1 sm:gap-1.5 md:gap-2 w-[78%]">
+                  <HexIcon className="w-3.5 h-3.5 sm:w-5 sm:h-5 md:w-6 md:h-6 text-rose-gold-deep shrink-0" />
+                  <span className="text-[0.42rem] sm:text-[0.58rem] md:text-[0.7rem] uppercase tracking-[0.05em] sm:tracking-[0.1em] leading-[1.15] text-charcoal font-medium break-words hyphens-auto">
+                    {s.t}
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
     </div>
   );
 }
+
 
 /* ---------- Portfolio ---------- */
 function Portfolio() {
