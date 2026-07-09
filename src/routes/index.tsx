@@ -352,162 +352,119 @@ function Services() {
 }
 
 function HoneycombServices({ services }: { services: { icon: React.ElementType; t: string; d: string }[] }) {
-  // Solitaire-style card stack. Top card can be dragged / clicked to send it to the back.
-  const [order, setOrder] = useState<number[]>(() => services.map((_, i) => i));
-  const [direction, setDirection] = useState<1 | -1>(1);
+  // pointy-top hex geometry in viewBox units
+  const W = 100;
+  const H = 115.47; // W * 2/sqrt(3)
+  const VSTEP = H * 0.75;
 
-  const cycle = (dir: 1 | -1 = 1) => {
-    setDirection(dir);
-    setOrder((prev) => {
-      if (dir === 1) {
-        const [first, ...rest] = prev;
-        return [...rest, first];
-      }
-      const last = prev[prev.length - 1];
-      return [last, ...prev.slice(0, -1)];
-    });
-  };
+  // Clustered honeycomb layout inspired by reference:
+  // - a dense main cluster on the left
+  // - a small cluster on the top-right
+  // - a couple of stragglers on the bottom
+  // s = service index (filled hex). deco = outline-only decorative hex.
+  type Cell = { c: number; r: number; s?: number; deco?: boolean };
+  const cells: Cell[] = [
+    // main cluster (left)
+    { c: 0.5, r: 0, deco: true },
+    { c: 1.5, r: 0, s: 0 },
+    { c: 2.5, r: 0, deco: true },
+    { c: 0, r: 1, deco: true },
+    { c: 1, r: 1, s: 1 },
+    { c: 2, r: 1, s: 2 },
+    { c: 3, r: 1, s: 3 },
+    { c: 0.5, r: 2, s: 4 },
+    { c: 1.5, r: 2, deco: true },
+    { c: 2.5, r: 2, s: 5 },
+    { c: 3.5, r: 2, deco: true },
+    // top-right cluster
+    { c: 5.2, r: 0, s: 6 },
+    { c: 5.7, r: 1, deco: true },
+    { c: 6.2, r: 0, deco: true },
+    { c: 4.7, r: 1, deco: true },
+    // bottom stragglers
+    { c: 2, r: 3, deco: true },
+    { c: 3, r: 3, s: 7 },
+  ];
+
+  const xs = cells.map((c) => c.c * W);
+  const ys = cells.map((c) => c.r * VSTEP);
+  const minX = Math.min(...xs) - 4;
+  const maxX = Math.max(...xs) + W + 4;
+  const minY = Math.min(...ys) - 4;
+  const maxY = Math.max(...ys) + H + 4;
+  const vbW = maxX - minX;
+  const vbH = maxY - minY;
 
   return (
-    <div className="mx-auto w-full max-w-5xl">
-      <div className="grid gap-10 md:gap-14 md:grid-cols-[minmax(0,1fr)_auto] items-center">
-        {/* Stack */}
-        <div className="relative mx-auto w-full max-w-[380px] sm:max-w-[420px] aspect-[3/4] select-none">
-          {order.map((serviceIdx, stackIdx) => {
-            const s = services[serviceIdx];
-            const HexIcon = s.icon;
-            const isTop = stackIdx === 0;
-            const depth = stackIdx;
-            // Fanned solitaire look: each card behind is offset & rotated a touch.
-            const offsetX = depth * 10;
-            const offsetY = depth * -6;
-            const rot = ((serviceIdx % 5) - 2) * 1.2 + depth * 0.6;
-            const scale = 1 - depth * 0.035;
+    <div className="mx-auto w-full max-w-4xl">
+      <div className="relative w-full" style={{ aspectRatio: `${vbW} / ${vbH}` }}>
+        {cells.map((cell, i) => {
+          const x = cell.c * W - minX;
+          const y = cell.r * VSTEP - minY;
+          const leftPct = (x / vbW) * 100;
+          const topPct = (y / vbH) * 100;
+          const wPct = (W / vbW) * 100;
+          const hPct = (H / vbH) * 100;
 
+          if (cell.deco) {
             return (
               <motion.div
-                key={serviceIdx}
-                className={`absolute inset-0 rounded-2xl overflow-hidden ${isTop ? "cursor-grab active:cursor-grabbing" : "pointer-events-none"}`}
-                style={{ zIndex: services.length - stackIdx }}
-                initial={false}
-                animate={{
-                  x: offsetX,
-                  y: offsetY,
-                  rotate: rot,
-                  scale,
-                  opacity: depth > 3 ? 0 : 1,
-                }}
-                transition={{ type: "spring", stiffness: 260, damping: 30, mass: 0.9 }}
-                drag={isTop ? "x" : false}
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.6}
-                whileHover={isTop ? { y: offsetY - 6, scale: scale * 1.01 } : undefined}
-                onDragEnd={(_, info) => {
-                  if (Math.abs(info.offset.x) > 90 || Math.abs(info.velocity.x) > 500) {
-                    cycle(info.offset.x < 0 ? 1 : -1);
-                  }
-                }}
-                onClick={() => isTop && cycle(1)}
+                key={`d-${i}`}
+                initial={{ opacity: 0, scale: 0.85 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ duration: 0.5, delay: i * 0.03, ease: [0.2, 0.7, 0.2, 1] }}
+                className="absolute pointer-events-none"
+                style={{ left: `${leftPct}%`, top: `${topPct}%`, width: `${wPct}%`, height: `${hPct}%` }}
               >
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    background:
-                      "linear-gradient(155deg, color-mix(in oklab, white 92%, var(--champagne)) 0%, color-mix(in oklab, white 78%, var(--champagne)) 100%)",
-                    boxShadow:
-                      "0 30px 60px -30px color-mix(in oklab, var(--rose-gold-deep) 45%, transparent), 0 2px 0 0 color-mix(in oklab, var(--rose-gold) 25%, transparent) inset",
-                    border: "1px solid color-mix(in oklab, var(--rose-gold) 35%, transparent)",
-                    borderRadius: 16,
-                  }}
-                />
-                {/* corner ornament like a playing card */}
-                <div className="absolute top-4 left-4 sm:top-5 sm:left-5 flex items-center gap-1.5 text-rose-gold-deep">
-                  <span className="text-[0.6rem] sm:text-[0.68rem] tracking-[0.2em] uppercase">{String(serviceIdx + 1).padStart(2, "0")}</span>
-                </div>
-                <div className="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 rotate-180 flex items-center gap-1.5 text-rose-gold-deep">
-                  <span className="text-[0.6rem] sm:text-[0.68rem] tracking-[0.2em] uppercase">{String(serviceIdx + 1).padStart(2, "0")}</span>
-                </div>
-
-                <div className="absolute inset-0 grid place-items-center px-8 sm:px-10 text-center">
-                  <div className="flex flex-col items-center gap-4 sm:gap-5">
-                    <div
-                      className="grid place-items-center w-14 h-14 sm:w-16 sm:h-16 rounded-full"
-                      style={{
-                        background: "color-mix(in oklab, white 60%, var(--champagne))",
-                        border: "1px solid color-mix(in oklab, var(--rose-gold) 45%, transparent)",
-                      }}
-                    >
-                      <HexIcon className="w-6 h-6 sm:w-7 sm:h-7 text-rose-gold-deep" />
-                    </div>
-                    <h3 className="text-serif text-xl sm:text-2xl leading-tight text-charcoal">{s.t}</h3>
-                    <p className="text-[0.78rem] sm:text-[0.85rem] leading-relaxed text-charcoal/70 max-w-[28ch]">
-                      {s.d}
-                    </p>
-                    <span className="mt-1 text-[0.6rem] tracking-[0.28em] uppercase text-rose-gold-deep/80">
-                      {isTop ? "drag · tap to shuffle" : ""}
-                    </span>
-                  </div>
-                </div>
+                <svg viewBox="0 0 100 115.47" preserveAspectRatio="none" className="w-full h-full">
+                  <polygon
+                    points="50,2 96,28.75 96,86.72 50,113.47 4,86.72 4,28.75"
+                    fill="transparent"
+                    stroke="var(--rose-gold)"
+                    strokeWidth="2"
+                    strokeLinejoin="round"
+                    opacity="0.55"
+                  />
+                </svg>
               </motion.div>
             );
-          })}
-        </div>
+          }
 
-        {/* Index / controls */}
-        <div className="flex md:flex-col items-center md:items-start justify-center gap-3 md:gap-2">
-          <div className="hidden md:block text-[0.62rem] tracking-[0.28em] uppercase text-charcoal/50 mb-2">
-            Disciplines
-          </div>
-          <div className="flex md:flex-col gap-1.5 flex-wrap justify-center">
-            {services.map((s, i) => {
-              const active = order[0] === i;
-              return (
-                <button
-                  key={s.t}
-                  onClick={() => {
-                    const idx = order.indexOf(i);
-                    if (idx === 0) return;
-                    setDirection(1);
-                    setOrder((prev) => [...prev.slice(idx), ...prev.slice(0, idx)]);
-                  }}
-                  className="group flex items-center gap-2 text-left"
-                >
-                  <span
-                    className="inline-block h-px transition-all duration-500"
-                    style={{
-                      width: active ? 28 : 12,
-                      background: active ? "var(--rose-gold-deep)" : "color-mix(in oklab, var(--rose-gold) 50%, transparent)",
-                    }}
-                  />
-                  <span
-                    className={`text-[0.7rem] tracking-[0.16em] uppercase transition-colors ${active ? "text-charcoal" : "text-charcoal/45 group-hover:text-charcoal/80"}`}
-                  >
+          const s = services[cell.s!];
+          const HexIcon = s.icon;
+          return (
+            <motion.div
+              key={s.t}
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.55, delay: i * 0.04, ease: [0.2, 0.7, 0.2, 1] }}
+              whileHover={{ y: -4, scale: 1.04 }}
+              className="absolute cursor-default"
+              style={{ left: `${leftPct}%`, top: `${topPct}%`, width: `${wPct}%`, height: `${hPct}%` }}
+            >
+              <svg viewBox="0 0 100 115.47" preserveAspectRatio="none" className="absolute inset-0 w-full h-full">
+                <polygon
+                  points="50,2 96,28.75 96,86.72 50,113.47 4,86.72 4,28.75"
+                  fill="color-mix(in oklab, white 82%, var(--champagne))"
+                  stroke="var(--rose-gold)"
+                  strokeWidth="2.5"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <div className="absolute inset-0 grid place-items-center text-center">
+                <div className="flex flex-col items-center gap-1 sm:gap-1.5 md:gap-2 w-[78%]">
+                  <HexIcon className="w-3.5 h-3.5 sm:w-5 sm:h-5 md:w-6 md:h-6 text-rose-gold-deep shrink-0" />
+                  <span className="text-[0.42rem] sm:text-[0.58rem] md:text-[0.7rem] uppercase tracking-[0.05em] sm:tracking-[0.1em] leading-[1.15] text-charcoal font-medium break-words hyphens-auto">
                     {s.t}
                   </span>
-                </button>
-              );
-            })}
-          </div>
-          <div className="mt-3 hidden md:flex gap-2">
-            <button
-              onClick={() => cycle(-1)}
-              className="w-9 h-9 rounded-full grid place-items-center border border-rose-gold/40 text-rose-gold-deep hover:bg-rose-gold/10 transition"
-              aria-label="Previous card"
-            >
-              ‹
-            </button>
-            <button
-              onClick={() => cycle(1)}
-              className="w-9 h-9 rounded-full grid place-items-center border border-rose-gold/40 text-rose-gold-deep hover:bg-rose-gold/10 transition"
-              aria-label="Next card"
-            >
-              ›
-            </button>
-          </div>
-        </div>
+                </div>
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
-      {/* silence unused var lint */}
-      <span className="hidden">{direction}</span>
     </div>
   );
 }
