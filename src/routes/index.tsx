@@ -556,7 +556,13 @@ function Portfolio() {
       title={<>Objects of <em className="text-serif italic text-rose-gold-deep">quiet</em> distinction.</>}
       intro="A curated selection of engagements — each a collaboration with founders and teams who share our devotion to craft."
     >
-      <div className="space-y-24">
+      {/* Mobile: swipeable auto-slider */}
+      <div className="md:hidden">
+        <PortfolioSlider projects={projects} />
+      </div>
+
+      {/* Desktop: alternating stacked layout */}
+      <div className="hidden md:block space-y-24">
         {projects.map((p, i) => (
           <Reveal key={p.title}>
             <div className={`grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center ${
@@ -591,6 +597,105 @@ function Portfolio() {
     </Section>
   );
 }
+
+type Project = {
+  img: string;
+  cat: string;
+  industry: string;
+  title: string;
+  tech: string;
+  overview: string;
+};
+
+function PortfolioSlider({ projects }: { projects: Project[] }) {
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const count = projects.length;
+
+  useEffect(() => {
+    if (paused) return;
+    const id = window.setInterval(() => {
+      setIndex((i) => (i + 1) % count);
+    }, 4200);
+    return () => window.clearInterval(id);
+  }, [paused, count]);
+
+  const go = (i: number) => setIndex(((i % count) + count) % count);
+
+  return (
+    <div
+      className="relative"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      <div className="overflow-hidden rounded-[1.5rem]">
+        <motion.div
+          className="flex"
+          animate={{ x: `-${index * 100}%` }}
+          transition={{ type: "spring", stiffness: 220, damping: 32 }}
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.18}
+          onDragStart={() => setPaused(true)}
+          onDragEnd={(_, info) => {
+            const threshold = 60;
+            if (info.offset.x < -threshold) go(index + 1);
+            else if (info.offset.x > threshold) go(index - 1);
+            // brief pause then resume
+            window.setTimeout(() => setPaused(false), 800);
+          }}
+        >
+          {projects.map((p) => (
+            <div key={p.title} className="min-w-full px-1">
+              <div className="rounded-[1.5rem] overflow-hidden shadow-[0_30px_70px_-30px_rgba(142,92,103,0.28)]">
+                <img
+                  src={p.img}
+                  alt={p.title}
+                  width={1200}
+                  height={900}
+                  loading="lazy"
+                  draggable={false}
+                  className="w-full h-[280px] sm:h-[340px] object-cover select-none pointer-events-none"
+                />
+              </div>
+              <div className="mt-6 px-1">
+                <div className="eyebrow mb-3">{p.cat} — {p.industry}</div>
+                <h3 className="text-display text-[1.75rem] sm:text-[2rem] text-charcoal leading-[1.05]">
+                  {p.title}
+                </h3>
+                <div className="hairline my-5" />
+                <p className="text-[0.98rem] leading-[1.75] text-charcoal/70">{p.overview}</p>
+                <div className="mt-5 text-[0.72rem] tracking-[0.14em] uppercase text-charcoal/55">
+                  {p.tech}
+                </div>
+              </div>
+            </div>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* Dots */}
+      <div className="mt-8 flex items-center justify-center gap-2.5">
+        {projects.map((_, i) => (
+          <button
+            key={i}
+            aria-label={`Go to slide ${i + 1}`}
+            onClick={() => go(i)}
+            className="group h-2 rounded-full transition-all"
+            style={{
+              width: i === index ? 28 : 8,
+              background:
+                i === index
+                  ? "var(--rose-gold-deep)"
+                  : "color-mix(in oklab, var(--rose-gold) 40%, transparent)",
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 
 /* ---------- Process ---------- */
 function Process() {
