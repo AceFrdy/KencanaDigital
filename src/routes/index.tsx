@@ -396,16 +396,29 @@ function HoneycombCluster({
         const wPct = (W / vbW) * 100;
         const hPct = (H / vbH) * 100;
 
+        // Solitaire card-deal: cards fly in from top-left pile with rotation
+        const dealDelay = i * 0.07;
+
         if (cell.deco) {
           return (
             <motion.div
               key={`d-${i}`}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, x: -120, y: -160, rotate: -25, scale: 0.75 }}
+              whileInView={{ opacity: 1, x: 0, y: 0, rotate: 0, scale: 1 }}
               viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.5, delay: i * 0.03, ease: [0.2, 0.7, 0.2, 1] }}
+              transition={{
+                duration: 0.7,
+                delay: dealDelay,
+                ease: [0.22, 1, 0.36, 1],
+              }}
               className="absolute pointer-events-none"
-              style={{ left: `${leftPct}%`, top: `${topPct}%`, width: `${wPct}%`, height: `${hPct}%` }}
+              style={{
+                left: `${leftPct}%`,
+                top: `${topPct}%`,
+                width: `${wPct}%`,
+                height: `${hPct}%`,
+                transformOrigin: "center",
+              }}
             >
               <svg viewBox="0 0 100 115.47" preserveAspectRatio="none" className="w-full h-full">
                 <polygon
@@ -426,27 +439,37 @@ function HoneycombCluster({
         return (
           <motion.div
             key={s.t}
-            initial={{ opacity: 0, y: 14 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -140, y: -180, rotate: -30, scale: 0.7 }}
+            whileInView={{ opacity: 1, x: 0, y: 0, rotate: 0, scale: 1 }}
             viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.55, delay: i * 0.04, ease: [0.2, 0.7, 0.2, 1] }}
-            whileHover={{ y: -4, scale: 1.04 }}
+            transition={{
+              duration: 0.75,
+              delay: dealDelay,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            whileHover={{ y: -4, scale: 1.04, rotate: 0 }}
             className="absolute cursor-default"
-            style={{ left: `${leftPct}%`, top: `${topPct}%`, width: `${wPct}%`, height: `${hPct}%` }}
+            style={{
+              left: `${leftPct}%`,
+              top: `${topPct}%`,
+              width: `${wPct}%`,
+              height: `${hPct}%`,
+              transformOrigin: "center",
+            }}
           >
             <svg viewBox="0 0 100 115.47" preserveAspectRatio="none" className="absolute inset-0 w-full h-full">
               <polygon
                 points="50,2 96,28.75 96,86.72 50,113.47 4,86.72 4,28.75"
-                fill="color-mix(in oklab, white 82%, var(--champagne))"
-                stroke="var(--rose-gold)"
+                fill="color-mix(in oklab, var(--rose-gold) 55%, white)"
+                stroke="var(--rose-gold-deep)"
                 strokeWidth="2.2"
                 strokeLinejoin="round"
               />
             </svg>
             <div className="absolute inset-0 grid place-items-center text-center">
               <div className="flex flex-col items-center gap-1 sm:gap-1.5 md:gap-2 w-[80%]">
-                <HexIcon className="w-3.5 h-3.5 sm:w-5 sm:h-5 md:w-6 md:h-6 text-rose-gold-deep shrink-0" />
-                <span className="text-[0.46rem] sm:text-[0.6rem] md:text-[0.7rem] uppercase tracking-[0.06em] sm:tracking-[0.1em] leading-[1.15] text-charcoal font-medium break-words hyphens-auto">
+                <HexIcon className="w-3.5 h-3.5 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white shrink-0" />
+                <span className="text-[0.46rem] sm:text-[0.6rem] md:text-[0.72rem] uppercase tracking-[0.06em] sm:tracking-[0.1em] leading-[1.15] text-white font-semibold break-words hyphens-auto">
                   {s.t}
                 </span>
               </div>
@@ -459,51 +482,42 @@ function HoneycombCluster({
 }
 
 function HoneycombServices({ services }: { services: { icon: React.ElementType; t: string; d: string }[] }) {
-  // Main cluster — 7 services in a tidy, symmetric honeycomb
-  // Pointy-top hex coordinates: columns offset by 0.5 on odd rows.
-  const mainCells: Cell[] = [
-    // Row 0 — top
+  // Unified honeycomb matching reference image. Pointy-top with row offset 0.5.
+  // Service indices: 0=Website Dev, 1=Enterprise, 2=Mobile, 3=UI/UX, 4=Branding,
+  //                  5=AI, 6=Cloud, 7=Digital Consulting
+  const cells: Cell[] = [
+    // Row 0 — top: 3 outlines on the left, 2 filled on the right
     { c: 0.5, r: 0, deco: true },
-    { c: 1.5, r: 0, s: 0 }, // Premium Website Development
+    { c: 1.5, r: 0, deco: true },
     { c: 2.5, r: 0, deco: true },
-    // Row 1 — middle
+    { c: 3.5, r: 0, s: 0 }, // Website Development
+    { c: 4.5, r: 0, s: 1 }, // Enterprise Applications
+    // Row 1 — 3 filled center flanked by outlines
     { c: 0, r: 1, deco: true },
-    { c: 1, r: 1, s: 1 }, // Enterprise Applications
-    { c: 2, r: 1, s: 2 }, // Mobile Applications
-    { c: 3, r: 1, s: 3 }, // UI/UX Design
-    // Row 2
-    { c: 0.5, r: 2, s: 4 }, // Branding & Identity
-    { c: 1.5, r: 2, deco: true },
-    { c: 2.5, r: 2, s: 5 }, // AI Solutions
-    // Row 3 — bottom
+    { c: 1, r: 1, s: 2 }, // Mobile Apps
+    { c: 2, r: 1, s: 3 }, // UI/UX Design
+    { c: 3, r: 1, s: 4 }, // Branding & Identity
+    { c: 4, r: 1, deco: true },
+    // Row 2 — 3 filled on the left, 2 outlines right
+    { c: 0.5, r: 2, s: 5 }, // AI Solutions
+    { c: 1.5, r: 2, s: 6 }, // Cloud Infrastructure
+    { c: 2.5, r: 2, s: 7 }, // Digital Consulting
+    { c: 3.5, r: 2, deco: true },
+    { c: 4.5, r: 2, deco: true },
+    // Row 3 — bottom decorative row
     { c: 1, r: 3, deco: true },
-    { c: 2, r: 3, s: 7 }, // Digital Consulting
+    { c: 2, r: 3, deco: true },
     { c: 3, r: 3, deco: true },
-  ];
-
-  // Side cluster — Cloud Infrastructure surrounded by deco outlines
-  const sideCells: Cell[] = [
-    { c: 0.5, r: 0, deco: true },
-    { c: 1.5, r: 0, s: 6 }, // Cloud Infrastructure
-    { c: 0, r: 1, deco: true },
-    { c: 1, r: 1, deco: true },
-    { c: 2, r: 1, deco: true },
+    { c: 4, r: 3, deco: true },
   ];
 
   return (
-    <div className="mx-auto w-full max-w-5xl">
-      {/* Desktop / tablet: side-by-side. Mobile: stacked, side cluster narrower & centered. */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-center md:gap-8 lg:gap-12">
-        <HoneycombCluster services={services} cells={mainCells} className="mx-auto w-[92%] sm:w-[88%] md:w-[62%]" />
-        <HoneycombCluster
-          services={services}
-          cells={sideCells}
-          className="mx-auto mt-[-6%] w-[62%] sm:w-[52%] md:mt-0 md:w-[34%]"
-        />
-      </div>
+    <div className="mx-auto w-full max-w-4xl">
+      <HoneycombCluster services={services} cells={cells} className="mx-auto w-[96%] sm:w-[92%] md:w-full" />
     </div>
   );
 }
+
 
 
 
