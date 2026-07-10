@@ -247,7 +247,7 @@ function Section({
   );
 }
 
-/* ---------- Reveal ---------- */
+/* ---------- Reveal (solitaire card-deal) ---------- */
 function Reveal({
   children,
   delay = 0,
@@ -262,15 +262,26 @@ function Reveal({
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 24 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.8, delay, ease: [0.2, 0.7, 0.2, 1] }}
+      initial={{ opacity: 0, y: -60, x: -40, rotate: -8, scale: 0.9 }}
+      animate={
+        inView
+          ? { opacity: 1, y: 0, x: 0, rotate: 0, scale: 1 }
+          : {}
+      }
+      transition={{
+        duration: 0.75,
+        delay,
+        ease: [0.22, 1, 0.36, 1],
+        opacity: { duration: 0.5, delay },
+      }}
+      style={{ transformOrigin: "top left", transformPerspective: 1200 }}
       className={className}
     >
       {children}
     </motion.div>
   );
 }
+
 
 /* ---------- About ---------- */
 function About() {
