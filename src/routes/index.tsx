@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { motion, useInView, useMotionValue, useSpring, useScroll, useTransform } from "framer-motion";
+import { motion, useInView, useMotionValue, useSpring, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import {
   ArrowUpRight,
@@ -18,6 +18,8 @@ import {
   Plus,
   Minus,
   Quote,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 import heroImg from "@/assets/hero.jpg";
@@ -467,9 +469,9 @@ function HoneycombCluster({
               />
             </svg>
             <div className="absolute inset-0 grid place-items-center text-center">
-              <div className="flex flex-col items-center gap-1 sm:gap-1.5 md:gap-2 w-[80%]">
-                <HexIcon className="w-3.5 h-3.5 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white shrink-0" />
-                <span className="text-[0.46rem] sm:text-[0.6rem] md:text-[0.72rem] uppercase tracking-[0.06em] sm:tracking-[0.1em] leading-[1.15] text-white font-semibold break-words hyphens-auto">
+              <div className="flex flex-col items-center gap-1 min-[360px]:gap-1.5 sm:gap-1.5 md:gap-2 w-[92%] sm:w-[80%]">
+                <HexIcon className="w-3.5 h-3.5 min-[360px]:w-4 min-[360px]:h-4 min-[400px]:w-4.5 min-[400px]:h-4.5 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white shrink-0" />
+                <span className="text-[0.44rem] min-[360px]:text-[0.5rem] min-[400px]:text-[0.56rem] sm:text-[0.6rem] md:text-[0.72rem] uppercase tracking-[0.02em] min-[360px]:tracking-[0.05em] sm:tracking-[0.1em] leading-[1.1] sm:leading-[1.15] text-white font-semibold break-words">
                   {s.t}
                 </span>
               </div>
@@ -485,7 +487,8 @@ function HoneycombServices({ services }: { services: { icon: React.ElementType; 
   // Unified honeycomb matching reference image. Pointy-top with row offset 0.5.
   // Service indices: 0=Website Dev, 1=Enterprise, 2=Mobile, 3=UI/UX, 4=Branding,
   //                  5=AI, 6=Cloud, 7=Digital Consulting
-  const cells: Cell[] = [
+
+  const desktopCells: Cell[] = [
     // Row 0 — top: 3 outlines on the left, 2 filled on the right
     { c: 0.5, r: 0, deco: true },
     { c: 1.5, r: 0, deco: true },
@@ -511,9 +514,41 @@ function HoneycombServices({ services }: { services: { icon: React.ElementType; 
     { c: 4, r: 3, deco: true },
   ];
 
+  const mobileCells: Cell[] = [
+    // Row 0
+    { c: -0.5, r: 0, deco: true },
+    { c: 0.5, r: 0, s: 0 }, // Website Development
+    { c: 1.5, r: 0, s: 1 }, // Enterprise Applications
+    { c: 2.5, r: 0, deco: true },
+    // Row 1
+    { c: 0, r: 1, s: 2 }, // Mobile Apps
+    { c: 1, r: 1, s: 3 }, // UI/UX Design
+    { c: 2, r: 1, s: 4 }, // Branding & Identity
+    // Row 2
+    { c: -0.5, r: 2, deco: true },
+    { c: 0.5, r: 2, s: 5 }, // AI Solutions
+    { c: 1.5, r: 2, s: 6 }, // Cloud Infrastructure
+    { c: 2.5, r: 2, deco: true },
+    // Row 3
+    { c: 0, r: 3, s: 7 }, // Digital Consulting
+    { c: 1, r: 3, deco: true },
+    { c: 2, r: 3, deco: true },
+  ];
+
   return (
     <div className="mx-auto w-full max-w-4xl">
-      <HoneycombCluster services={services} cells={cells} className="mx-auto w-[96%] sm:w-[92%] md:w-full" />
+      {/* Desktop view */}
+      <HoneycombCluster
+        services={services}
+        cells={desktopCells}
+        className="hidden sm:block mx-auto w-full"
+      />
+      {/* Mobile view */}
+      <HoneycombCluster
+        services={services}
+        cells={mobileCells}
+        className="block sm:hidden mx-auto w-[96%]"
+      />
     </div>
   );
 }
@@ -697,7 +732,6 @@ function PortfolioSlider({ projects }: { projects: Project[] }) {
 }
 
 
-/* ---------- Process ---------- */
 function Process() {
   const steps = [
     "Discovery", "Strategy", "Design", "Development", "Quality Assurance", "Launch", "Continuous Growth",
@@ -709,12 +743,17 @@ function Process() {
       title={<>A measured process, from <em className="text-serif italic text-rose-gold-deep">first sketch</em> to lasting growth.</>}
       className="bg-pearl/60"
     >
-      <div className="relative">
-        <div className="hidden md:block absolute left-0 right-0 top-[38px] h-px"
-             style={{ background: "linear-gradient(90deg, transparent, var(--rose-gold) 20%, var(--gold-soft) 80%, transparent)" }} />
-        <div className="grid grid-cols-2 md:grid-cols-7 gap-y-14 md:gap-x-6">
+      <div className="relative overflow-hidden md:overflow-visible">
+        <div className="flex md:grid md:grid-cols-7 overflow-x-auto md:overflow-x-visible pb-8 md:pb-0 gap-8 md:gap-x-6 snap-x snap-mandatory scrollbar-none relative py-4 px-4 md:px-0">
+          
+          {/* Connecting Line */}
+          <div 
+            className="absolute top-[54px] h-px pointer-events-none left-[81px] md:left-[50px] md:right-[50px] w-[972px] md:w-[calc(100%-100px)]"
+            style={{ background: "linear-gradient(90deg, var(--rose-gold) 20%, var(--gold-soft) 80%)" }} 
+          />
+          
           {steps.map((s, i) => (
-            <Reveal key={s} delay={i * 0.05}>
+            <Reveal key={s} delay={i * 0.05} className="snap-center shrink-0 min-w-[130px] md:min-w-0 z-10">
               <div className="flex flex-col items-center text-center">
                 <div className="relative w-[76px] h-[76px] rounded-full grid place-items-center bg-ivory border border-warm-border"
                      style={{ boxShadow: "0 12px 30px -12px rgba(142,92,103,0.25)" }}>
