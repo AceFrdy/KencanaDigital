@@ -29,6 +29,29 @@ import portfolio2 from "@/assets/portfolio-2.jpg";
 import portfolio3 from "@/assets/portfolio-3.jpg";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "KencanaDigital — Premium Luxury Digital & Tech Studio" },
+      {
+        name: "description",
+        content:
+          "Premium digital studio crafting high-end bespoke websites, enterprise software, and elegant mobile apps. Discover how KencanaDigital crafts luxury digital experiences.",
+      },
+      {
+        property: "og:title",
+        content: "KencanaDigital — Premium Luxury Digital & Tech Studio",
+      },
+      {
+        property: "og:description",
+        content:
+          "Transform your brand with bespoke, elite digital experiences crafted with unparalleled design and technical precision.",
+      },
+      {
+        property: "og:url",
+        content: "https://kencanadigital.com/",
+      },
+    ],
+  }),
   component: LandingPage,
 });
 
