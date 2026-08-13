@@ -61,9 +61,12 @@ function Nav() {
           scrolled ? "glass-panel rounded-full py-2.5 px-6" : ""
         }`}
       >
-        <a href="#top" className="flex items-baseline gap-2">
-          <span className="text-display text-xl md:text-[1.6rem] text-charcoal">Kencana</span>
-          <span className="text-serif italic text-rose-gold text-lg md:text-xl">Digital</span>
+        <a href="#top" className="flex items-center gap-2">
+          <img
+            src="/Logo.png"
+            alt="KencanaDigital Logo"
+            className="h-10 w-auto object-contain"
+          />
         </a>
         <nav className="hidden md:flex items-center gap-10">
           {links.map((l) => (
@@ -1019,9 +1022,12 @@ function Footer() {
     <footer className="border-t border-warm-border mt-10">
       <div className="mx-auto max-w-[1400px] px-6 md:px-10 py-16 grid grid-cols-1 md:grid-cols-12 gap-10">
         <div className="md:col-span-5">
-          <div className="flex items-baseline gap-2">
-            <span className="text-display text-2xl text-charcoal">Kencana</span>
-            <span className="text-serif italic text-rose-gold text-xl">Digital</span>
+          <div className="flex items-center gap-2">
+            <img
+              src="/Logo.png"
+              alt="KencanaDigital Logo"
+              className="h-16 w-auto object-contain"
+            />
           </div>
           <p className="mt-5 text-[0.95rem] leading-[1.8] text-charcoal/65 max-w-md">
             A bespoke digital atelier crafting websites, applications, and brand
