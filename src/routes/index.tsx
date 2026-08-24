@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 
 import heroImg from "@/assets/hero.jpg";
-import aboutImg from "@/assets/about.jpg";
+import aboutImg from "@/assets/About1.png";
 import portfolio1 from "@/assets/portfolio-1.jpg";
 import portfolio2 from "@/assets/portfolio-2.jpg";
 import portfolio3 from "@/assets/portfolio-3.jpg";
