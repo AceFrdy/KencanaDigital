@@ -541,24 +541,24 @@ function HoneycombServices({ services }: { services: { icon: React.ElementType; 
   ];
 
   const mobileCells: Cell[] = [
-    // Row 0
-    { c: -0.5, r: 0, deco: true },
-    { c: 0.5, r: 0, s: 0 }, // Website Development
-    { c: 1.5, r: 0, s: 1 }, // Enterprise Applications
-    { c: 2.5, r: 0, deco: true },
-    // Row 1
-    { c: 0, r: 1, s: 2 }, // Mobile Apps
-    { c: 1, r: 1, s: 3 }, // UI/UX Design
-    { c: 2, r: 1, s: 4 }, // Branding & Identity
-    // Row 2
-    { c: -0.5, r: 2, deco: true },
-    { c: 0.5, r: 2, s: 5 }, // AI Solutions
-    { c: 1.5, r: 2, s: 6 }, // Cloud Infrastructure
-    { c: 2.5, r: 2, deco: true },
-    // Row 3
-    { c: 0, r: 3, s: 7 }, // Digital Consulting
-    { c: 1, r: 3, deco: true },
+    // Row 0 — 2 filled + deco flanks
+    { c: 0.5, r: 0, deco: true },
+    { c: 1.5, r: 0, s: 0 }, // Website Development
+    { c: 2.5, r: 0, s: 1 }, // Enterprise Applications
+    { c: 3.5, r: 0, deco: true },
+    // Row 1 — 2 filled (offset)
+    { c: 1, r: 1, s: 2 }, // Mobile Apps
+    { c: 2, r: 1, s: 3 }, // UI/UX Design
+    { c: 3, r: 1, deco: true },
+    // Row 2 — 2 filled + deco
+    { c: 0.5, r: 2, s: 4 }, // Branding & Identity
+    { c: 1.5, r: 2, s: 5 }, // AI Solutions
+    { c: 2.5, r: 2, s: 6 }, // Cloud Infrastructure
+    { c: 3.5, r: 2, deco: true },
+    // Row 3 — 1 filled + deco
+    { c: 1, r: 3, s: 7 }, // Digital Consulting
     { c: 2, r: 3, deco: true },
+    { c: 3, r: 3, deco: true },
   ];
 
   return (
