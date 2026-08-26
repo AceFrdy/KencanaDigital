@@ -396,10 +396,12 @@ function HoneycombCluster({
   services,
   cells,
   className = "",
+  viewportMargin = "-60px",
 }: {
   services: { icon: React.ElementType; t: string; d: string }[];
   cells: Cell[];
   className?: string;
+  viewportMargin?: string;
 }) {
   const W = 100;
   const H = 115.47; // W * 2/sqrt(3)
@@ -433,7 +435,7 @@ function HoneycombCluster({
               key={`d-${i}`}
               initial={{ opacity: 0, x: -120, y: -160, rotate: -25, scale: 0.75 }}
               whileInView={{ opacity: 1, x: 0, y: 0, rotate: 0, scale: 1 }}
-              viewport={{ once: true, margin: "-60px" }}
+              viewport={{ once: true, margin: viewportMargin }}
               transition={{
                 duration: 0.7,
                 delay: dealDelay,
@@ -469,7 +471,7 @@ function HoneycombCluster({
             key={s.t}
             initial={{ opacity: 0, x: -140, y: -180, rotate: -30, scale: 0.7 }}
             whileInView={{ opacity: 1, x: 0, y: 0, rotate: 0, scale: 1 }}
-            viewport={{ once: true, margin: "-60px" }}
+            viewport={{ once: true, margin: viewportMargin }}
             transition={{
               duration: 0.75,
               delay: dealDelay,
@@ -541,24 +543,29 @@ function HoneycombServices({ services }: { services: { icon: React.ElementType; 
   ];
 
   const mobileCells: Cell[] = [
-    // Row 0 — 2 filled + deco flanks
-    { c: 0.5, r: 0, deco: true },
-    { c: 1.5, r: 0, s: 0 }, // Website Development
-    { c: 2.5, r: 0, s: 1 }, // Enterprise Applications
-    { c: 3.5, r: 0, deco: true },
-    // Row 1 — 2 filled (offset)
-    { c: 1, r: 1, s: 2 }, // Mobile Apps
-    { c: 2, r: 1, s: 3 }, // UI/UX Design
-    { c: 3, r: 1, deco: true },
-    // Row 2 — 2 filled + deco
-    { c: 0.5, r: 2, s: 4 }, // Branding & Identity
-    { c: 1.5, r: 2, s: 5 }, // AI Solutions
-    { c: 2.5, r: 2, s: 6 }, // Cloud Infrastructure
-    { c: 3.5, r: 2, deco: true },
-    // Row 3 — 1 filled + deco
-    { c: 1, r: 3, s: 7 }, // Digital Consulting
+    // Row 0 — deco left + 2 services + deco right
+    { c: -0.5, r: 0, deco: true },
+    { c: 0.5, r: 0, s: 0 }, // Website Development
+    { c: 1.5, r: 0, s: 1 }, // Enterprise Applications
+    { c: 2.5, r: 0, deco: true },
+    // Row 1 — 3 services across
+    { c: 0, r: 1, s: 2 }, // Mobile Apps
+    { c: 1, r: 1, s: 3 }, // UI/UX Design
+    { c: 2, r: 1, s: 4 }, // Branding & Identity
+    // Row 2 — deco left + 2 services + deco right
+    { c: -0.5, r: 2, deco: true },
+    { c: 0.5, r: 2, s: 5 }, // AI Solutions
+    { c: 1.5, r: 2, s: 6 }, // Cloud Infrastructure
+    { c: 2.5, r: 2, deco: true },
+    // Row 3 — 1 service + deco
+    { c: 0, r: 3, s: 7 }, // Digital Consulting
+    { c: 1, r: 3, deco: true },
     { c: 2, r: 3, deco: true },
-    { c: 3, r: 3, deco: true },
+    // Row 4 — bottom decorative row
+    { c: -0.5, r: 4, deco: true },
+    { c: 0.5, r: 4, deco: true },
+    { c: 1.5, r: 4, deco: true },
+    { c: 2.5, r: 4, deco: true },
   ];
 
   return (
@@ -569,11 +576,13 @@ function HoneycombServices({ services }: { services: { icon: React.ElementType; 
         cells={desktopCells}
         className="hidden sm:block mx-auto w-full"
       />
-      {/* Mobile view */}
+      {/* Mobile view — viewportMargin="0px" prevents left-edge cells
+          from staying invisible due to the intersection observer -60px shrinkage */}
       <HoneycombCluster
         services={services}
         cells={mobileCells}
         className="block sm:hidden mx-auto w-[96%]"
+        viewportMargin="0px"
       />
     </div>
   );
