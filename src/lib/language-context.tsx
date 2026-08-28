@@ -14,7 +14,7 @@ export const translations = {
     },
     hero: {
       eyebrow: "Bespoke Digital Atelier",
-      desc: "KencanaDigital creates premium websites, enterprise software, and digital experiences designed for brands that value quality, elegance, and long-term growth.",
+      desc: "Kencana Digital creates premium websites, enterprise software, and digital experiences designed for brands that value quality, elegance, and long-term growth.",
       ctaPrimary: "Start Your Project",
       ctaSecondary: "View Portfolio",
       years: "Years",
@@ -26,7 +26,7 @@ export const translations = {
     about: {
       eyebrow: "The Atelier",
       mainText:
-        "KencanaDigital is a studio of designers, engineers and strategists devoted to a single idea: that software, when made with care, becomes a lasting expression of a brand's character.",
+        "Kencana Digital is a studio of designers, engineers and strategists devoted to a single idea: that software, when made with care, becomes a lasting expression of a brand's character.",
       pillars: [
         {
           t: "Attention to Detail",
@@ -131,7 +131,7 @@ export const translations = {
       ],
     },
     whyUs: {
-      eyebrow: "Why KencanaDigital",
+      eyebrow: "Why Kencana Digital",
       stats: [
         { label: "Projects Delivered" },
         { label: "Client Satisfaction" },
@@ -154,7 +154,7 @@ export const translations = {
           r: "Head of Product, Auréum Wealth",
         },
         {
-          q: "KencanaDigital didn't just deliver software — they elevated how our teams work every day.",
+          q: "Kencana Digital didn't just deliver software — they elevated how our teams work every day.",
           n: "Iselin Marchetti",
           r: "COO, Loggia Group",
         },
@@ -229,7 +229,7 @@ export const translations = {
     },
     hero: {
       eyebrow: "Bespoke Digital Atelier",
-      desc: "KencanaDigital merancang website premium, perangkat lunak enterprise, dan pengalaman digital berkelas tinggi bagi brand yang mengutamakan kualitas, keanggunan, serta pertumbuhan jangka panjang.",
+      desc: "Kencana Digital merancang website premium, perangkat lunak enterprise, dan pengalaman digital berkelas tinggi bagi brand yang mengutamakan kualitas, keanggunan, serta pertumbuhan jangka panjang.",
       ctaPrimary: "Mulai Proyek Anda",
       ctaSecondary: "Lihat Portofolio",
       years: "Tahun Dedikasi",
@@ -241,7 +241,7 @@ export const translations = {
     about: {
       eyebrow: "The Atelier",
       mainText:
-        "KencanaDigital adalah studio para desainer, insinyur perangkat lunak, dan pakar strategi yang berdedikasi pada satu visi: bahwa teknologi dan perangkat lunak, bila dirancang dengan penuh ketelitian, menjadi perwujudan abadi dari karakter sebuah brand ternama.",
+        "Kencana Digital adalah studio para desainer, insinyur perangkat lunak, dan pakar strategi yang berdedikasi pada satu visi: bahwa teknologi dan perangkat lunak, bila dirancang dengan penuh ketelitian, menjadi perwujudan abadi dari karakter sebuah brand ternama.",
       pillars: [
         {
           t: "Attention to Detail",
@@ -346,7 +346,7 @@ export const translations = {
       ],
     },
     whyUs: {
-      eyebrow: "Why KencanaDigital",
+      eyebrow: "Why Kencana Digital",
       stats: [
         { label: "Proyek Selesai" },
         { label: "Kepuasan Klien" },
@@ -369,7 +369,7 @@ export const translations = {
           r: "Head of Product, Auréum Wealth",
         },
         {
-          q: "KencanaDigital tidak sekadar membangun perangkat lunak — mereka meningkatkan standar cara kerja tim kami setiap harinya.",
+          q: "Kencana Digital tidak sekadar membangun perangkat lunak — mereka meningkatkan standar cara kerja tim kami setiap harinya.",
           n: "Iselin Marchetti",
           r: "COO, Loggia Group",
         },
