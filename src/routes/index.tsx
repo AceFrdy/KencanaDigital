@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { motion, useInView, useMotionValue, useSpring, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useInView, useMotionValue, useSpring, useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import {
   ArrowUpRight,
@@ -18,15 +18,15 @@ import {
   Plus,
   Minus,
   Quote,
-  ChevronLeft,
-  ChevronRight,
+  Globe,
 } from "lucide-react";
 
 import heroImg from "@/assets/hero.jpg";
-import aboutImg from "@/assets/About1.png";
+import aboutImg from "@/assets/bmjir.png";
 import portfolio1 from "@/assets/portfolio-1.jpg";
 import portfolio2 from "@/assets/portfolio-2.jpg";
 import portfolio3 from "@/assets/portfolio-3.jpg";
+import { useLanguage } from "@/lib/language-context";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -55,9 +55,45 @@ export const Route = createFileRoute("/")({
   component: LandingPage,
 });
 
+/* ---------- Language Switcher Component ---------- */
+function LanguageToggle() {
+  const { lang, setLang } = useLanguage();
+
+  return (
+    <div className="flex items-center rounded-full p-0.5 border border-warm-border bg-pearl/80 backdrop-blur-sm shadow-[inset_0_1px_2px_rgba(0,0,0,0.04)]">
+      <button
+        type="button"
+        onClick={() => setLang("en")}
+        aria-label="Switch to English"
+        className={`px-2.5 py-1 text-[0.65rem] sm:text-[0.68rem] font-medium tracking-wider uppercase rounded-full transition-all duration-300 ${
+          lang === "en"
+            ? "bg-rose-gold-deep text-ivory shadow-[0_2px_8px_-2px_rgba(142,92,103,0.5)] font-semibold"
+            : "text-charcoal/60 hover:text-charcoal"
+        }`}
+      >
+        EN
+      </button>
+      <button
+        type="button"
+        onClick={() => setLang("id")}
+        aria-label="Ganti ke Bahasa Indonesia"
+        className={`px-2.5 py-1 text-[0.65rem] sm:text-[0.68rem] font-medium tracking-wider uppercase rounded-full transition-all duration-300 ${
+          lang === "id"
+            ? "bg-rose-gold-deep text-ivory shadow-[0_2px_8px_-2px_rgba(142,92,103,0.5)] font-semibold"
+            : "text-charcoal/60 hover:text-charcoal"
+        }`}
+      >
+        ID
+      </button>
+    </div>
+  );
+}
+
 /* ---------- Nav ---------- */
 function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  const { t } = useLanguage();
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
     onScroll();
@@ -80,15 +116,15 @@ function Nav() {
       }`}
     >
       <div
-        className={`mx-auto flex max-w-[1400px] items-center justify-between px-6 md:px-10 transition-all duration-500 ${
-          scrolled ? "glass-panel rounded-full py-2.5 px-6" : ""
+        className={`mx-auto flex max-w-[1400px] items-center justify-between px-4 sm:px-6 md:px-10 transition-all duration-500 ${
+          scrolled ? "glass-panel rounded-full py-2.5 px-4 sm:px-6 shadow-[var(--shadow-soft)]" : ""
         }`}
       >
         <a href="#top" className="flex items-center gap-2">
           <img
             src="/Logo.png"
             alt="KencanaDigital Logo"
-            className="h-10 w-auto object-contain"
+            className="h-9 sm:h-10 w-auto object-contain"
           />
         </a>
         <nav className="hidden md:flex items-center gap-10">
@@ -102,9 +138,12 @@ function Nav() {
             </a>
           ))}
         </nav>
-        <a href="#contact" className="btn-luxury btn-luxury-hover text-[0.7rem] py-2.5 px-5">
-          Consult
-        </a>
+        <div className="flex items-center gap-2.5 sm:gap-3.5">
+          <LanguageToggle />
+          <a href="#contact" className="btn-luxury btn-luxury-hover text-[0.68rem] sm:text-[0.7rem] py-2 sm:py-2.5 px-3.5 sm:px-5">
+            {t.nav.consult}
+          </a>
+        </div>
       </div>
     </header>
   );
@@ -112,6 +151,7 @@ function Nav() {
 
 /* ---------- Hero ---------- */
 function Hero() {
+  const { t } = useLanguage();
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], [0, 120]);
@@ -133,7 +173,7 @@ function Hero() {
             className="flex items-center gap-3 mb-8"
           >
             <span className="rose-divider" />
-            <span className="eyebrow">Bespoke Digital Atelier</span>
+            <span className="eyebrow">{t.hero.eyebrow}</span>
           </motion.div>
 
           <motion.h1
@@ -148,14 +188,13 @@ function Hero() {
           </motion.h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 24 }}
+            key={t.hero.desc}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.15 }}
+            transition={{ duration: 0.5 }}
             className="mt-8 max-w-xl text-[1.05rem] leading-[1.75] text-charcoal/70"
           >
-            KencanaDigital creates premium websites, enterprise software, and digital
-            experiences designed for brands that value quality, elegance, and long-term
-            growth.
+            {t.hero.desc}
           </motion.p>
 
           <motion.div
@@ -165,9 +204,9 @@ function Hero() {
             className="mt-10 flex flex-wrap items-center gap-4"
           >
             <a href="#contact" className="btn-luxury btn-luxury-hover">
-              Start Your Project <ArrowUpRight className="w-4 h-4" />
+              {t.hero.ctaPrimary} <ArrowUpRight className="w-4 h-4" />
             </a>
-            <a href="#portfolio" className="btn-ghost-luxury">View Portfolio</a>
+            <a href="#portfolio" className="btn-ghost-luxury">{t.hero.ctaSecondary}</a>
           </motion.div>
 
           <motion.div
@@ -177,18 +216,18 @@ function Hero() {
             className="mt-16 flex items-center gap-8"
           >
             <div>
-              <div className="text-display text-3xl text-charcoal">08<span className="text-rose-gold">+</span></div>
-              <div className="text-[0.7rem] uppercase tracking-[0.24em] text-charcoal/55 mt-1">Years</div>
+              <div className="text-display text-3xl text-charcoal">3<span className="text-rose-gold">+</span></div>
+              <div className="text-[0.7rem] uppercase tracking-[0.24em] text-charcoal/55 mt-1">{t.hero.years}</div>
             </div>
             <div className="w-px h-10 bg-warm-border" style={{ background: "var(--warm-border)" }} />
             <div>
-              <div className="text-display text-3xl text-charcoal">100<span className="text-rose-gold">+</span></div>
-              <div className="text-[0.7rem] uppercase tracking-[0.24em] text-charcoal/55 mt-1">Projects</div>
+              <div className="text-display text-3xl text-charcoal">10<span className="text-rose-gold">+</span></div>
+              <div className="text-[0.7rem] uppercase tracking-[0.24em] text-charcoal/55 mt-1">{t.hero.projects}</div>
             </div>
             <div className="w-px h-10" style={{ background: "var(--warm-border)" }} />
             <div>
               <div className="text-display text-3xl text-charcoal">98<span className="text-rose-gold">%</span></div>
-              <div className="text-[0.7rem] uppercase tracking-[0.24em] text-charcoal/55 mt-1">Satisfaction</div>
+              <div className="text-[0.7rem] uppercase tracking-[0.24em] text-charcoal/55 mt-1">{t.hero.satisfaction}</div>
             </div>
           </motion.div>
         </motion.div>
@@ -222,8 +261,8 @@ function Hero() {
               <Sparkles className="w-4 h-4 text-white" />
             </div>
             <div>
-              <div className="text-[0.72rem] uppercase tracking-[0.22em] text-charcoal/60">Awarded</div>
-              <div className="text-sm text-charcoal">Design Excellence, 2025</div>
+              <div className="text-[0.72rem] uppercase tracking-[0.22em] text-charcoal/60">{t.hero.awardedTitle}</div>
+              <div className="text-sm text-charcoal">{t.hero.awardedSubtitle}</div>
             </div>
           </motion.div>
         </motion.div>
@@ -310,15 +349,10 @@ function Reveal({
   );
 }
 
-
 /* ---------- About ---------- */
 function About() {
-  const pillars = [
-    { t: "Attention to Detail", d: "Every pixel, transition, and line of code refined with the patience of a master craftsman." },
-    { t: "Long-term Partnerships", d: "We stay by your side, evolving your product through every chapter of growth." },
-    { t: "Premium Craftsmanship", d: "Bespoke systems built to endure — engineered with restraint and elegance." },
-    { t: "Reliable Delivery", d: "Predictable timelines, transparent communication, uncompromising standards." },
-  ];
+  const { t } = useLanguage();
+
   return (
     <Section
       id="about"
@@ -333,23 +367,17 @@ function About() {
                    width={1200} height={1400} loading="lazy"
                    className="w-full h-[520px] object-cover" />
             </div>
-            <div className="absolute -bottom-6 -right-6 glass-panel rounded-2xl px-6 py-5 hidden md:block">
-              <div className="text-display text-2xl text-charcoal">Est. 2017</div>
-              <div className="text-[0.7rem] uppercase tracking-[0.22em] text-charcoal/60 mt-1">Jakarta · Global</div>
-            </div>
           </div>
         </Reveal>
 
         <div className="lg:col-span-7 lg:col-start-6">
           <Reveal>
             <p className="text-serif text-[1.4rem] md:text-[1.6rem] leading-[1.55] text-charcoal/85">
-              KencanaDigital is a studio of designers, engineers and strategists devoted
-              to a single idea: that software, when made with care, becomes a lasting
-              expression of a brand's character.
+              {t.about.mainText}
             </p>
           </Reveal>
           <div className="mt-14 grid sm:grid-cols-2 gap-x-10 gap-y-10">
-            {pillars.map((p, i) => (
+            {t.about.pillars.map((p, i) => (
               <Reveal key={p.t} delay={i * 0.08}>
                 <div>
                   <div className="hairline mb-5" />
@@ -367,22 +395,31 @@ function About() {
 
 /* ---------- Services ---------- */
 function Services() {
-  const services = [
-    { icon: Layers, t: "Premium Website Development", d: "Editorial, marketing and commerce sites tailored to your brand voice." },
-    { icon: Cpu, t: "Enterprise Applications", d: "Robust internal systems that scale with the complexity of your business." },
-    { icon: Smartphone, t: "Mobile Applications", d: "Native-quality iOS and Android products, refined to the last detail." },
-    { icon: PenTool, t: "UI/UX Design", d: "Interfaces conceived like architecture — considered, generous, humane." },
-    { icon: Palette, t: "Branding & Identity", d: "Visual systems that translate strategy into a coherent expression." },
-    { icon: Sparkles, t: "AI Solutions", d: "Intelligent workflows and assistants woven quietly into your product." },
-    { icon: Cloud, t: "Cloud Infrastructure", d: "Resilient, observable platforms built for continuous evolution." },
-    { icon: Compass, t: "Digital Consulting", d: "Strategy engagements that align product, brand and technology." },
+  const { t } = useLanguage();
+
+  const serviceIcons = [
+    Layers,
+    Cpu,
+    Smartphone,
+    PenTool,
+    Palette,
+    Sparkles,
+    Cloud,
+    Compass,
   ];
+
+  const services = t.services.items.map((item, idx) => ({
+    icon: serviceIcons[idx],
+    t: item.t,
+    d: item.d,
+  }));
+
   return (
     <Section
       id="services"
       eyebrow="Disciplines"
       title={<>A complete studio, under <em className="text-serif italic text-rose-gold-deep">one roof</em>.</>}
-      intro="From first concept to continuous evolution, every discipline required to shape a category-defining digital product lives inside the atelier."
+      intro={t.services.intro}
       className="bg-pearl/60"
     >
       <HoneycombServices services={services} />
@@ -512,30 +549,22 @@ function HoneycombCluster({
 }
 
 function HoneycombServices({ services }: { services: { icon: React.ElementType; t: string; d: string }[] }) {
-  // Unified honeycomb matching reference image. Pointy-top with row offset 0.5.
-  // Service indices: 0=Website Dev, 1=Enterprise, 2=Mobile, 3=UI/UX, 4=Branding,
-  //                  5=AI, 6=Cloud, 7=Digital Consulting
-
   const desktopCells: Cell[] = [
-    // Row 0 — top: 3 outlines on the left, 2 filled on the right
     { c: 0.5, r: 0, deco: true },
     { c: 1.5, r: 0, deco: true },
     { c: 2.5, r: 0, deco: true },
-    { c: 3.5, r: 0, s: 0 }, // Website Development
-    { c: 4.5, r: 0, s: 1 }, // Enterprise Applications
-    // Row 1 — 3 filled center flanked by outlines
+    { c: 3.5, r: 0, s: 0 },
+    { c: 4.5, r: 0, s: 1 },
     { c: 0, r: 1, deco: true },
-    { c: 1, r: 1, s: 2 }, // Mobile Apps
-    { c: 2, r: 1, s: 3 }, // UI/UX Design
-    { c: 3, r: 1, s: 4 }, // Branding & Identity
+    { c: 1, r: 1, s: 2 },
+    { c: 2, r: 1, s: 3 },
+    { c: 3, r: 1, s: 4 },
     { c: 4, r: 1, deco: true },
-    // Row 2 — 3 filled on the left, 2 outlines right
-    { c: 0.5, r: 2, s: 5 }, // AI Solutions
-    { c: 1.5, r: 2, s: 6 }, // Cloud Infrastructure
-    { c: 2.5, r: 2, s: 7 }, // Digital Consulting
+    { c: 0.5, r: 2, s: 5 },
+    { c: 1.5, r: 2, s: 6 },
+    { c: 2.5, r: 2, s: 7 },
     { c: 3.5, r: 2, deco: true },
     { c: 4.5, r: 2, deco: true },
-    // Row 3 — bottom decorative row
     { c: 1, r: 3, deco: true },
     { c: 2, r: 3, deco: true },
     { c: 3, r: 3, deco: true },
@@ -543,25 +572,20 @@ function HoneycombServices({ services }: { services: { icon: React.ElementType; 
   ];
 
   const mobileCells: Cell[] = [
-    // Row 0 — deco left + 2 services + deco right
     { c: -0.5, r: 0, deco: true },
-    { c: 0.5, r: 0, s: 0 }, // Website Development
-    { c: 1.5, r: 0, s: 1 }, // Enterprise Applications
+    { c: 0.5, r: 0, s: 0 },
+    { c: 1.5, r: 0, s: 1 },
     { c: 2.5, r: 0, deco: true },
-    // Row 1 — 3 services across
-    { c: 0, r: 1, s: 2 }, // Mobile Apps
-    { c: 1, r: 1, s: 3 }, // UI/UX Design
-    { c: 2, r: 1, s: 4 }, // Branding & Identity
-    // Row 2 — deco left + 2 services + deco right
+    { c: 0, r: 1, s: 2 },
+    { c: 1, r: 1, s: 3 },
+    { c: 2, r: 1, s: 4 },
     { c: -0.5, r: 2, deco: true },
-    { c: 0.5, r: 2, s: 5 }, // AI Solutions
-    { c: 1.5, r: 2, s: 6 }, // Cloud Infrastructure
+    { c: 0.5, r: 2, s: 5 },
+    { c: 1.5, r: 2, s: 6 },
     { c: 2.5, r: 2, deco: true },
-    // Row 3 — 1 service + deco
-    { c: 0, r: 3, s: 7 }, // Digital Consulting
+    { c: 0, r: 3, s: 7 },
     { c: 1, r: 3, deco: true },
     { c: 2, r: 3, deco: true },
-    // Row 4 — bottom decorative row
     { c: -0.5, r: 4, deco: true },
     { c: 0.5, r: 4, deco: true },
     { c: 1.5, r: 4, deco: true },
@@ -570,14 +594,11 @@ function HoneycombServices({ services }: { services: { icon: React.ElementType; 
 
   return (
     <div className="mx-auto w-full max-w-4xl">
-      {/* Desktop view */}
       <HoneycombCluster
         services={services}
         cells={desktopCells}
         className="hidden sm:block mx-auto w-full"
       />
-      {/* Mobile view — viewportMargin="0px" prevents left-edge cells
-          from staying invisible due to the intersection observer -60px shrinkage */}
       <HoneycombCluster
         services={services}
         cells={mobileCells}
@@ -588,43 +609,27 @@ function HoneycombServices({ services }: { services: { icon: React.ElementType; 
   );
 }
 
-
-
-
 /* ---------- Portfolio ---------- */
 function Portfolio() {
-  const projects = [
-    {
-      img: portfolio1,
-      cat: "Editorial Commerce",
-      industry: "Luxury Beauty",
-      title: "Maison Célestine",
-      tech: "Next.js · Shopify · Sanity",
-      overview: "A poetic commerce experience for a heritage French skincare house.",
-    },
-    {
-      img: portfolio2,
-      cat: "Mobile Application",
-      industry: "Private Banking",
-      title: "Auréum Wealth",
-      tech: "React Native · Kotlin · Swift",
-      overview: "A calm, considered wealth companion for high-net-worth clients.",
-    },
-    {
-      img: portfolio3,
-      cat: "Enterprise Platform",
-      industry: "Hospitality Group",
-      title: "Loggia Operations Suite",
-      tech: "Next.js · PostgreSQL · AWS",
-      overview: "An operations backbone connecting twenty-three properties worldwide.",
-    },
-  ];
+  const { t } = useLanguage();
+
+  const projectImages = [portfolio1, portfolio2, portfolio3];
+
+  const projects = t.portfolio.projects.map((p, idx) => ({
+    img: projectImages[idx],
+    cat: p.cat,
+    industry: p.industry,
+    title: p.title,
+    tech: p.tech,
+    overview: p.overview,
+  }));
+
   return (
     <Section
       id="portfolio"
       eyebrow="Selected Work"
       title={<>Objects of <em className="text-serif italic text-rose-gold-deep">quiet</em> distinction.</>}
-      intro="A curated selection of engagements — each a collaboration with founders and teams who share our devotion to craft."
+      intro={t.portfolio.intro}
     >
       {/* Mobile: swipeable auto-slider */}
       <div className="md:hidden">
@@ -657,7 +662,7 @@ function Portfolio() {
                 </div>
                 <a href="#contact"
                    className="mt-8 inline-flex items-center gap-2 text-[0.78rem] uppercase tracking-[0.22em] text-charcoal gold-underline pb-1 hover:text-rose-gold-deep transition-colors">
-                  View case study <ArrowUpRight className="w-4 h-4" />
+                  {t.portfolio.viewCaseStudy} <ArrowUpRight className="w-4 h-4" />
                 </a>
               </div>
             </div>
@@ -678,6 +683,7 @@ type Project = {
 };
 
 function PortfolioSlider({ projects }: { projects: Project[] }) {
+  const { t } = useLanguage();
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const count = projects.length;
@@ -711,7 +717,6 @@ function PortfolioSlider({ projects }: { projects: Project[] }) {
             const threshold = 60;
             if (info.offset.x < -threshold) go(index + 1);
             else if (info.offset.x > threshold) go(index - 1);
-            // brief pause then resume
             window.setTimeout(() => setPaused(false), 800);
           }}
         >
@@ -766,11 +771,10 @@ function PortfolioSlider({ projects }: { projects: Project[] }) {
   );
 }
 
-
+/* ---------- Process ---------- */
 function Process() {
-  const steps = [
-    "Discovery", "Strategy", "Design", "Development", "Quality Assurance", "Launch", "Continuous Growth",
-  ];
+  const { t } = useLanguage();
+
   return (
     <Section
       id="process"
@@ -787,14 +791,14 @@ function Process() {
             style={{ background: "linear-gradient(90deg, var(--rose-gold) 20%, var(--gold-soft) 80%)" }} 
           />
           
-          {steps.map((s, i) => (
+          {t.process.steps.map((s, i) => (
             <Reveal key={s} delay={i * 0.05} className="snap-center shrink-0 min-w-[130px] md:min-w-0 z-10">
               <div className="flex flex-col items-center text-center">
                 <div className="relative w-[76px] h-[76px] rounded-full grid place-items-center bg-ivory border border-warm-border"
                      style={{ boxShadow: "0 12px 30px -12px rgba(142,92,103,0.25)" }}>
                   <span className="text-serif italic text-rose-gold-deep text-xl">0{i + 1}</span>
                 </div>
-                <div className="mt-6 text-[0.72rem] uppercase tracking-[0.24em] text-charcoal/60">Phase</div>
+                <div className="mt-6 text-[0.72rem] uppercase tracking-[0.24em] text-charcoal/60">{t.process.phaseLabel}</div>
                 <div className="mt-1 text-display text-lg text-charcoal">{s}</div>
               </div>
             </Reveal>
@@ -820,12 +824,15 @@ function Counter({ to, suffix = "" }: { to: number; suffix?: string }) {
 }
 
 function WhyUs() {
+  const { t } = useLanguage();
+
   const stats = [
-    { n: 100, suf: "+", label: "Projects Delivered" },
-    { n: 98, suf: "%", label: "Client Satisfaction" },
-    { n: 8, suf: "+", label: "Years of Craft" },
-    { n: 24, suf: "/7", label: "Technical Support" },
+    { n: 10, suf: "+", label: t.whyUs.stats[0].label },
+    { n: 98, suf: "%", label: t.whyUs.stats[1].label },
+    { n: 3, suf: "+", label: t.whyUs.stats[2].label },
+    { n: 24, suf: "/7", label: t.whyUs.stats[3].label },
   ];
+
   return (
     <Section
       eyebrow="Why KencanaDigital"
@@ -846,7 +853,7 @@ function WhyUs() {
 
       {/* Client logos */}
       <div className="mt-24">
-        <div className="text-center eyebrow mb-10">Trusted by discerning brands</div>
+        <div className="text-center eyebrow mb-10">{t.whyUs.trustedEyebrow}</div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-x-8 gap-y-6 opacity-60">
           {["Maison Céleste", "Auréum", "Loggia", "Verdant & Co.", "Noir Atelier", "Solstice"].map((c) => (
             <div key={c} className="text-center text-serif italic text-charcoal/70 text-lg">{c}</div>
@@ -859,25 +866,15 @@ function WhyUs() {
 
 /* ---------- Testimonials ---------- */
 function Testimonials() {
-  const items = [
-    {
-      q: "They approached our brand as if it were their own — every detail considered, nothing rushed. The result feels timeless.",
-      n: "Amara Salim", r: "CEO, Maison Céleste",
-    },
-    {
-      q: "The most professional studio we've engaged. Their sense of craft is matched only by the reliability of their delivery.",
-      n: "Rendra Wibowo", r: "Head of Product, Auréum Wealth",
-    },
-    {
-      q: "KencanaDigital didn't just deliver software — they elevated how our teams work every day.",
-      n: "Iselin Marchetti", r: "COO, Loggia Group",
-    },
-  ];
+  const { t } = useLanguage();
+  const items = t.testimonials.items;
   const [idx, setIdx] = useState(0);
+
   useEffect(() => {
-    const t = setInterval(() => setIdx((i) => (i + 1) % items.length), 6500);
-    return () => clearInterval(t);
+    const timer = setInterval(() => setIdx((i) => (i + 1) % items.length), 6500);
+    return () => clearInterval(timer);
   }, [items.length]);
+
   return (
     <Section
       eyebrow="In Their Words"
@@ -887,7 +884,7 @@ function Testimonials() {
       <div className="max-w-4xl mx-auto text-center relative">
         <Quote className="w-14 h-14 text-rose-gold/40 mx-auto mb-8" strokeWidth={1} />
         <motion.blockquote
-          key={idx}
+          key={`${idx}-${t.testimonials.items[idx]?.q}`}
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
@@ -919,19 +916,10 @@ function Testimonials() {
 
 /* ---------- FAQ ---------- */
 function FAQ() {
-  const faqs = [
-    { q: "What kinds of engagements do you take on?",
-      a: "We partner with a small number of clients each year on bespoke websites, enterprise applications, mobile products, and brand systems — typically starting from strategy and continuing into long-term evolution." },
-    { q: "How long does a typical project take?",
-      a: "Marketing sites range from six to ten weeks. Product and enterprise engagements are typically four to six months for a first release, followed by continuous partnership." },
-    { q: "Do you work with brands outside Indonesia?",
-      a: "Yes. We operate globally and are fluent in remote and in-person collaboration. Our team spans multiple time zones." },
-    { q: "What does the investment look like?",
-      a: "Every engagement is tailored. Following an initial consultation, we prepare a considered proposal with clear scope, timeline, and investment." },
-    { q: "Will we own the work?",
-      a: "Absolutely. Upon completion, all intellectual property, code, and design assets belong to you." },
-  ];
+  const { t } = useLanguage();
+  const faqs = t.faq.faqs;
   const [open, setOpen] = useState<number | null>(0);
+
   return (
     <Section
       eyebrow="Questions"
@@ -971,12 +959,14 @@ function FAQ() {
 
 /* ---------- Contact ---------- */
 function Contact() {
+  const { t } = useLanguage();
+
   return (
     <Section
       id="contact"
       eyebrow="Begin the Conversation"
       title={<>Let us craft something <em className="text-serif italic text-rose-gold-deep">enduring</em> together.</>}
-      intro="Share a note about your ambitions. We reply personally within one business day."
+      intro={t.contact.intro}
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-14">
         <div className="lg:col-span-7">
@@ -985,35 +975,35 @@ function Contact() {
             className="card-luxury p-8 md:p-10 space-y-6"
           >
             <div className="grid sm:grid-cols-2 gap-6">
-              <Field label="Full name" placeholder="Your name" />
-              <Field label="Email" type="email" placeholder="you@brand.com" />
+              <Field label={t.contact.fullName} placeholder={t.contact.fullNamePlaceholder} />
+              <Field label={t.contact.email} type="email" placeholder={t.contact.emailPlaceholder} />
             </div>
             <div className="grid sm:grid-cols-2 gap-6">
-              <Field label="Company" placeholder="Brand or organisation" />
-              <Field label="Budget" placeholder="Indicative range" />
+              <Field label={t.contact.company} placeholder={t.contact.companyPlaceholder} />
+              <Field label={t.contact.budget} placeholder={t.contact.budgetPlaceholder} />
             </div>
             <div>
-              <label className="eyebrow block mb-3">Project vision</label>
+              <label className="eyebrow block mb-3">{t.contact.vision}</label>
               <textarea
                 rows={5}
-                placeholder="Tell us about the world you'd like to build..."
+                placeholder={t.contact.visionPlaceholder}
                 className="w-full bg-transparent border-b border-warm-border py-3 text-[0.98rem] text-charcoal placeholder:text-charcoal/35 focus:outline-none focus:border-rose-gold-deep transition-colors"
               />
             </div>
             <button type="submit" className="btn-luxury btn-luxury-hover mt-4">
-              Request Consultation <ArrowUpRight className="w-4 h-4" />
+              {t.contact.submit} <ArrowUpRight className="w-4 h-4" />
             </button>
           </form>
         </div>
 
         <aside className="lg:col-span-5 space-y-8">
-          <ContactRow icon={MapPin} label="Studio" value="Kencana Tower, 12F · Jakarta, Indonesia" />
-          <ContactRow icon={Mail} label="Correspondence" value="atelier@kencanadigital.com" />
-          <ContactRow icon={MessageCircle} label="WhatsApp" value="+62 811 2000 210" />
-          <ContactRow icon={Clock} label="Hours" value="Mon – Fri · 09:00 – 18:00 WIB" />
+          <ContactRow icon={MapPin} label={t.contact.studio} value="Jl. Imogiri Timur, Gng. Tobanan V, dsn. Jati Rt 008, Wonokromo, Pleret, Bantul, D.I. Yogyakarta, Indonesia" />
+          {/* <ContactRow icon={Mail} label={t.contact.correspondence} value="atelier@kencanadigital.com" /> */}
+          <ContactRow icon={MessageCircle} label={t.contact.whatsapp} value="081227283990 " />
+          <ContactRow icon={Clock} label={t.contact.hours} value={t.contact.hoursValue} />
           <div className="hairline" />
           <p className="text-serif italic text-charcoal/70 text-lg leading-relaxed">
-            "The considered response of a small studio, with the ambition of a global one."
+            {t.contact.quote}
           </p>
         </aside>
       </div>
@@ -1050,6 +1040,8 @@ function ContactRow({ icon: Icon, label, value }: { icon: any; label: string; va
 
 /* ---------- Footer ---------- */
 function Footer() {
+  const { t } = useLanguage();
+
   return (
     <footer className="border-t border-warm-border mt-10">
       <div className="mx-auto max-w-[1400px] px-6 md:px-10 py-16 grid grid-cols-1 md:grid-cols-12 gap-10">
@@ -1062,23 +1054,23 @@ function Footer() {
             />
           </div>
           <p className="mt-5 text-[0.95rem] leading-[1.8] text-charcoal/65 max-w-md">
-            A bespoke digital atelier crafting websites, applications, and brand
-            systems for enterprises and founders who value enduring quality.
+            {t.footer.desc}
           </p>
         </div>
-        <FooterCol title="Studio" items={["About", "Services", "Portfolio", "Process"]} />
-        <FooterCol title="Disciplines" items={["Web", "Mobile", "Enterprise", "Branding"]} />
-        <FooterCol title="Contact" items={["Consult", "WhatsApp", "Email", "Jakarta HQ"]} />
+        <FooterCol title={t.footer.colStudio} items={["About", "Services", "Portfolio", "Process"]} />
+        <FooterCol title={t.footer.colDisciplines} items={["Web", "Mobile", "Enterprise", "Branding"]} />
+        <FooterCol title={t.footer.colContact} items={["Consult", "WhatsApp", "Email", "Jakarta HQ"]} />
       </div>
       <div className="border-t border-warm-border">
         <div className="mx-auto max-w-[1400px] px-6 md:px-10 py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-[0.78rem] text-charcoal/55">
-          <span>© {new Date().getFullYear()} KencanaDigital. All rights reserved.</span>
-          <span className="tracking-[0.22em] uppercase">Crafted with devotion in Jakarta</span>
+          <span>© {new Date().getFullYear()} KencanaDigital. {t.footer.rights}</span>
+          <span className="tracking-[0.22em] uppercase">{t.footer.craftedIn}</span>
         </div>
       </div>
     </footer>
   );
 }
+
 function FooterCol({ title, items }: { title: string; items: string[] }) {
   return (
     <div className="md:col-span-2">
@@ -1096,6 +1088,8 @@ function FooterCol({ title, items }: { title: string; items: string[] }) {
 
 /* ---------- Floating consult ---------- */
 function FloatingConsult() {
+  const { t } = useLanguage();
+
   return (
     <a
       href="#contact"
@@ -1103,7 +1097,7 @@ function FloatingConsult() {
       style={{ background: "linear-gradient(135deg, var(--rose-gold-deep), var(--rose-gold))" }}
     >
       <MessageCircle className="w-4 h-4" />
-      Book a Consultation
+      {t.floatingConsult}
     </a>
   );
 }
@@ -1127,3 +1121,4 @@ function LandingPage() {
     </main>
   );
 }
+
