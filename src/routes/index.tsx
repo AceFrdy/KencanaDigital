@@ -25,9 +25,9 @@ import {
 
 import heroImg from "@/assets/hero.jpg";
 import aboutImg from "@/assets/bmjir.png";
-import portfolio1 from "@/assets/portfolio-1.jpg";
-import portfolio2 from "@/assets/portfolio-2.jpg";
-import portfolio3 from "@/assets/portfolio-3.jpg";
+import experience1 from "@/assets/experience-1.jpg";
+import experience2 from "@/assets/experience-2.jpg";
+import experience3 from "@/assets/experience-3.jpg";
 import { useLanguage } from "@/lib/language-context";
 
 export const Route = createFileRoute("/")({
@@ -107,7 +107,7 @@ function Nav() {
   const links = [
     { label: t.nav.about, href: "#about" },
     { label: t.nav.services, href: "#services" },
-    { label: t.nav.portfolio, href: "#portfolio" },
+    { label: t.nav.experience, href: "#experience" },
     { label: t.nav.process, href: "#process" },
     { label: t.nav.contact, href: "#contact" },
   ];
@@ -259,7 +259,7 @@ function Hero() {
             <a href="#contact" className="btn-luxury btn-luxury-hover justify-center text-center">
               {t.hero.ctaPrimary} <ArrowUpRight className="w-4 h-4" />
             </a>
-            <a href="#portfolio" className="btn-ghost-luxury justify-center text-center">{t.hero.ctaSecondary}</a>
+            <a href="#experience" className="btn-ghost-luxury justify-center text-center">{t.hero.ctaSecondary}</a>
           </motion.div>
 
           <motion.div
@@ -632,12 +632,12 @@ function HoneycombServices({ services }: { services: { icon: React.ElementType; 
 }
 
 /* ---------- Portfolio ---------- */
-function Portfolio() {
+function Experience() {
   const { t } = useLanguage();
 
-  const projectImages = [portfolio1, portfolio2, portfolio3];
+  const projectImages = [experience1, experience2, experience3];
 
-  const projects = t.portfolio.projects.map((p, idx) => ({
+  const projects = t.experience.projects.map((p, idx) => ({
     img: projectImages[idx],
     cat: p.cat,
     industry: p.industry,
@@ -648,10 +648,10 @@ function Portfolio() {
 
   return (
     <Section
-      id="portfolio"
-      eyebrow={t.portfolio.eyebrow}
+      id="experience"
+      eyebrow={t.experience.eyebrow}
       title={<>Objects of <em className="text-serif italic text-rose-gold-deep">quiet</em> distinction.</>}
-      intro={t.portfolio.intro}
+      intro={t.experience.intro}
     >
       {/* Mobile: swipeable auto-slider */}
       <div className="md:hidden">
@@ -684,7 +684,7 @@ function Portfolio() {
                 </div>
                 <a href="#contact"
                    className="mt-8 inline-flex items-center gap-2 text-[0.78rem] uppercase tracking-[0.22em] text-charcoal gold-underline pb-1 hover:text-rose-gold-deep transition-colors">
-                  {t.portfolio.viewCaseStudy} <ArrowUpRight className="w-4 h-4" />
+                  {t.experience.viewCaseStudy} <ArrowUpRight className="w-4 h-4" />
                 </a>
               </div>
             </div>
@@ -769,7 +769,7 @@ function PortfolioSlider({ projects }: { projects: Project[] }) {
                   href="#contact"
                   className="mt-5 inline-flex items-center gap-2 text-[0.72rem] uppercase tracking-[0.2em] text-charcoal gold-underline pb-1 hover:text-rose-gold-deep transition-colors"
                 >
-                  {t.portfolio.viewCaseStudy} <ArrowUpRight className="w-3.5 h-3.5" />
+                  {t.experience.viewCaseStudy} <ArrowUpRight className="w-3.5 h-3.5" />
                 </a>
               </div>
             </div>
@@ -1024,7 +1024,7 @@ function Footer() {
             {t.footer.desc}
           </p>
         </div>
-        <FooterCol title={t.footer.colStudio} items={["About", "Services", "Portfolio", "Process"]} />
+        <FooterCol title={t.footer.colStudio} items={["About", "Services", "Experience", "Process"]} />
         <FooterCol title={t.footer.colDisciplines} items={["Web", "Mobile", "Enterprise", "Branding"]} />
         <FooterCol title={t.footer.colContact} items={["Consult", "WhatsApp", "Email", "Jakarta HQ"]} />
       </div>
@@ -1077,7 +1077,7 @@ function LandingPage() {
       <Hero />
       <About />
       <Services />
-      <Portfolio />
+      <Experience />
       <Process />
       <WhyUs />
       {/* <Testimonials /> */}

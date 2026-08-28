@@ -7,7 +7,7 @@ export const translations = {
     nav: {
       about: "About",
       services: "Services",
-      portfolio: "Portfolio",
+      experience: "Experience",
       process: "Process",
       contact: "Contact",
       consult: "Consult",
@@ -16,7 +16,7 @@ export const translations = {
       eyebrow: "Bespoke Digital Atelier",
       desc: "Kencana Digital creates premium websites, enterprise software, and digital experiences designed for brands that value quality, elegance, and long-term growth.",
       ctaPrimary: "Start Your Project",
-      ctaSecondary: "View Portfolio",
+      ctaSecondary: "View Experience",
       years: "Years",
       projects: "Projects",
       satisfaction: "Satisfaction",
@@ -85,7 +85,7 @@ export const translations = {
         },
       ],
     },
-    portfolio: {
+    experience: {
       eyebrow: "Selected Work",
       intro:
         "A curated selection of engagements — each a collaboration with founders and teams who share our devotion to craft.",
@@ -222,7 +222,7 @@ export const translations = {
     nav: {
       about: "About",
       services: "Services",
-      portfolio: "Portfolio",
+      experience: "Experience",
       process: "Process",
       contact: "Contact",
       consult: "Konsultasi",
@@ -300,7 +300,7 @@ export const translations = {
         },
       ],
     },
-    portfolio: {
+    experience: {
       eyebrow: "Selected Work",
       intro:
         "Kurasi portofolio terpilih — setiap proyek merupakan kolaborasi mendalam dengan para founder dan tim yang menjunjung tinggi standar kualitas prima.",
