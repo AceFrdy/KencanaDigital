@@ -231,7 +231,7 @@ export const translations = {
       eyebrow: "Bespoke Digital Atelier",
       desc: "Kencana Digital merancang website premium, perangkat lunak enterprise, dan pengalaman digital berkelas tinggi bagi brand yang mengutamakan kualitas, keanggunan, serta pertumbuhan jangka panjang.",
       ctaPrimary: "Mulai Proyek Anda",
-      ctaSecondary: "Lihat Portofolio",
+      ctaSecondary: "Lihat Pengalaman",
       years: "Tahun Dedikasi",
       projects: "Proyek Selesai",
       satisfaction: "Kepuasan Klien",
@@ -303,7 +303,7 @@ export const translations = {
     experience: {
       eyebrow: "Selected Work",
       intro:
-        "Kurasi portofolio terpilih — setiap proyek merupakan kolaborasi mendalam dengan para founder dan tim yang menjunjung tinggi standar kualitas prima.",
+        "Kurasi Experience terpilih — setiap proyek merupakan kolaborasi mendalam dengan para founder dan tim yang menjunjung tinggi standar kualitas prima.",
       viewCaseStudy: "Lihat studi kasus",
       projects: [
         {

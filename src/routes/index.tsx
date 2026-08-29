@@ -25,9 +25,7 @@ import {
 
 import heroImg from "@/assets/hero.jpg";
 import aboutImg from "@/assets/bmjir.png";
-import experience1 from "@/assets/experience-1.jpg";
-import experience2 from "@/assets/experience-2.jpg";
-import experience3 from "@/assets/experience-3.jpg";
+
 import { useLanguage } from "@/lib/language-context";
 
 export const Route = createFileRoute("/")({
@@ -211,7 +209,7 @@ function Hero() {
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   return (
-    <section id="top" ref={ref} className="relative overflow-hidden pt-28 sm:pt-36 md:pt-48 pb-16 sm:pb-24 md:pb-32">
+    <section id="top" ref={ref} className="relative overflow-hidden pt-28 sm:pt-24 md:pt-28 pb-16 sm:pb-24 md:pb-24">
       <div className="pointer-events-none absolute -top-40 -right-40 w-[360px] sm:w-[520px] h-[360px] sm:h-[520px] rounded-full opacity-40"
            style={{ background: "radial-gradient(closest-side, var(--champagne), transparent 70%)" }} />
       <div className="pointer-events-none absolute top-1/2 -left-40 w-[300px] sm:w-[420px] h-[300px] sm:h-[420px] rounded-full opacity-30"
@@ -635,16 +633,14 @@ function HoneycombServices({ services }: { services: { icon: React.ElementType; 
 function Experience() {
   const { t } = useLanguage();
 
-  const projectImages = [experience1, experience2, experience3];
-
-  const projects = t.experience.projects.map((p, idx) => ({
-    img: projectImages[idx],
+  const projects = t.experience.projects.map((p) => ({
     cat: p.cat,
     industry: p.industry,
     title: p.title,
     tech: p.tech,
     overview: p.overview,
   }));
+
 
   return (
     <Section
@@ -667,9 +663,25 @@ function Experience() {
             }`}>
               <div className="lg:col-span-7">
                 <motion.div whileHover={{ y: -6 }} transition={{ duration: 0.5 }}
-                            className="rounded-[1.5rem] overflow-hidden shadow-[0_30px_70px_-30px_rgba(142,92,103,0.28)]">
-                  <img src={p.img} alt={p.title} width={1200} height={900} loading="lazy"
-                       className="w-full h-[380px] md:h-[500px] object-cover" />
+                            className="rounded-[1.5rem] overflow-hidden shadow-[0_30px_70px_-30px_rgba(142,92,103,0.28)] relative">
+                  <video
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="w-full h-[380px] md:h-[500px] object-cover bg-charcoal/10"
+                  >
+                    <source src="" type="video/mp4" />
+                  </video>
+                  {/* Placeholder overlay when no video source */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-champagne/40 via-pearl/60 to-ivory/40 backdrop-blur-[2px]">
+                    <div className="w-16 h-16 rounded-full border-2 border-rose-gold-deep/50 flex items-center justify-center bg-white/60 shadow-lg">
+                      <svg className="w-6 h-6 text-rose-gold-deep ml-1" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    </div>
+                    <span className="eyebrow text-charcoal/50 text-[0.65rem]">Video Coming Soon</span>
+                  </div>
                 </motion.div>
               </div>
               <div className="lg:col-span-5">
@@ -696,13 +708,13 @@ function Experience() {
 }
 
 type Project = {
-  img: string;
   cat: string;
   industry: string;
   title: string;
   tech: string;
   overview: string;
 };
+
 
 function PortfolioSlider({ projects }: { projects: Project[] }) {
   const { t } = useLanguage();
@@ -744,16 +756,26 @@ function PortfolioSlider({ projects }: { projects: Project[] }) {
         >
           {projects.map((p) => (
             <div key={p.title} className="min-w-full px-0.5">
-              <div className="rounded-[1.25rem] sm:rounded-[1.5rem] overflow-hidden shadow-[0_20px_50px_-20px_rgba(142,92,103,0.25)]">
-                <img
-                  src={p.img}
-                  alt={p.title}
-                  width={1200}
-                  height={900}
-                  loading="lazy"
+              <div className="rounded-[1.25rem] sm:rounded-[1.5rem] overflow-hidden shadow-[0_20px_50px_-20px_rgba(142,92,103,0.25)] relative">
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
                   draggable={false}
-                  className="w-full h-[220px] xs:h-[280px] sm:h-[340px] object-cover select-none pointer-events-none"
-                />
+                  className="w-full h-[220px] xs:h-[280px] sm:h-[340px] object-cover select-none pointer-events-none bg-charcoal/10"
+                >
+                  <source src="" type="video/mp4" />
+                </video>
+                {/* Placeholder overlay when no video source */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2.5 bg-gradient-to-br from-champagne/40 via-pearl/60 to-ivory/40 backdrop-blur-[2px]">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border-2 border-rose-gold-deep/50 flex items-center justify-center bg-white/60 shadow-lg">
+                    <svg className="w-5 h-5 text-rose-gold-deep ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </div>
+                  <span className="eyebrow text-charcoal/50 text-[0.6rem]">Video Coming Soon</span>
+                </div>
               </div>
               <div className="mt-5 px-1">
                 <div className="eyebrow mb-2 sm:mb-3">{p.cat} — {p.industry}</div>
@@ -893,7 +915,7 @@ function FAQ() {
       eyebrow={t.faq.eyebrow || "Questions"}
       title={<>Considerations, <em className="text-serif italic text-rose-gold-deep">answered</em>.</>}
     >
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-3xl mx-auto"> 
         {faqs.map((f, i) => {
           const isOpen = open === i;
           return (
@@ -1011,13 +1033,13 @@ function Footer() {
 
   return (
     <footer className="border-t border-warm-border mt-10">
-      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 py-12 sm:py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10">
+      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-5 py-6 sm:py-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10">
         <div className="sm:col-span-2 lg:col-span-5">
           <div className="flex items-center gap-2">
             <img
               src="/Logo.png"
               alt="Kencana Digital Logo"
-              className="h-12 sm:h-16 w-auto object-contain"
+              className="h-22 sm:h-26 w-auto object-contain"
             />
           </div>
           <p className="mt-4 sm:mt-5 text-[0.9rem] sm:text-[0.95rem] leading-[1.7] sm:leading-[1.8] text-charcoal/65 max-w-md">
