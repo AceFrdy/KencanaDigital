@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { motion, useInView, useMotionValue, useSpring, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useInView, useMotionValue, useSpring, useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import {
   ArrowUpRight,
@@ -18,20 +18,20 @@ import {
   Plus,
   Minus,
   Quote,
-  ChevronLeft,
-  ChevronRight,
+  Globe,
+  Menu,
+  X,
 } from "lucide-react";
 
 import heroImg from "@/assets/hero.jpg";
-import aboutImg from "@/assets/about.jpg";
-import portfolio1 from "@/assets/portfolio-1.jpg";
-import portfolio2 from "@/assets/portfolio-2.jpg";
-import portfolio3 from "@/assets/portfolio-3.jpg";
+import aboutImg from "@/assets/bmjir.png";
+
+import { useLanguage } from "@/lib/language-context";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "KencanaDigital — Premium Luxury Digital & Tech Studio" },
+      { title: "Kencana Digital — Premium Luxury Digital & Tech Studio" },
       {
         name: "description",
         content:
@@ -39,7 +39,7 @@ export const Route = createFileRoute("/")({
       },
       {
         property: "og:title",
-        content: "KencanaDigital — Premium Luxury Digital & Tech Studio",
+        content: "Kencana Digital — Premium Luxury Digital & Tech Studio",
       },
       {
         property: "og:description",
@@ -55,92 +55,183 @@ export const Route = createFileRoute("/")({
   component: LandingPage,
 });
 
+/* ---------- Language Switcher Component ---------- */
+function LanguageToggle() {
+  const { lang, setLang } = useLanguage();
+
+  return (
+    <div className="flex items-center rounded-full p-0.5 border border-warm-border bg-pearl/80 backdrop-blur-sm shadow-[inset_0_1px_2px_rgba(0,0,0,0.04)]">
+      <button
+        type="button"
+        onClick={() => setLang("en")}
+        aria-label="Switch to English"
+        className={`px-2.5 py-1 text-[0.65rem] sm:text-[0.68rem] font-medium tracking-wider uppercase rounded-full transition-all duration-300 ${
+          lang === "en"
+            ? "bg-rose-gold-deep text-ivory shadow-[0_2px_8px_-2px_rgba(142,92,103,0.5)] font-semibold"
+            : "text-charcoal/60 hover:text-charcoal"
+        }`}
+      >
+        EN
+      </button>
+      <button
+        type="button"
+        onClick={() => setLang("id")}
+        aria-label="Ganti ke Bahasa Indonesia"
+        className={`px-2.5 py-1 text-[0.65rem] sm:text-[0.68rem] font-medium tracking-wider uppercase rounded-full transition-all duration-300 ${
+          lang === "id"
+            ? "bg-rose-gold-deep text-ivory shadow-[0_2px_8px_-2px_rgba(142,92,103,0.5)] font-semibold"
+            : "text-charcoal/60 hover:text-charcoal"
+        }`}
+      >
+        ID
+      </button>
+    </div>
+  );
+}
+
 /* ---------- Nav ---------- */
 function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { t } = useLanguage();
+
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => setScrolled(window.scrollY > 20);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   const links = [
-    { label: "About", href: "#about" },
-    { label: "Services", href: "#services" },
-    { label: "Portfolio", href: "#portfolio" },
-    { label: "Process", href: "#process" },
-    { label: "Contact", href: "#contact" },
+    { label: t.nav.about, href: "#about" },
+    { label: t.nav.services, href: "#services" },
+    { label: t.nav.experience, href: "#experience" },
+    { label: t.nav.process, href: "#process" },
+    { label: t.nav.contact, href: "#contact" },
   ];
 
   return (
-    <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-        scrolled ? "py-3" : "py-6"
-      }`}
-    >
+    <header className="fixed inset-x-0 top-0 z-50 transition-all duration-300 py-3 sm:py-4 md:py-6 px-3 sm:px-6 md:px-10 pointer-events-none">
       <div
-        className={`mx-auto flex max-w-[1400px] items-center justify-between px-6 md:px-10 transition-all duration-500 ${
-          scrolled ? "glass-panel rounded-full py-2.5 px-6" : ""
+        className={`mx-auto flex max-w-[1400px] items-center justify-between pointer-events-auto rounded-full py-2 sm:py-2.5 px-3.5 sm:px-6 transition-all duration-300 ${
+          scrolled
+            ? "glass-panel bg-ivory/95 sm:bg-pearl/90 shadow-[var(--shadow-soft)] border border-warm-border/80"
+            : "bg-ivory/85 sm:bg-pearl/60 backdrop-blur-md border border-warm-border/60 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.06)]"
         }`}
       >
-        <a href="#top" className="flex items-center gap-2">
+        <a href="#top" className="flex items-center gap-2 shrink-0">
           <img
             src="/Logo.png"
             alt="KencanaDigital Logo"
-            className="h-10 w-auto object-contain"
+            className="h-7 sm:h-9 w-auto object-contain"
           />
         </a>
-        <nav className="hidden md:flex items-center gap-10">
+
+        {/* Desktop navigation */}
+        <nav className="hidden md:flex items-center gap-8 lg:gap-10">
           {links.map((l) => (
             <a
               key={l.href}
               href={l.href}
-              className="text-[0.78rem] uppercase tracking-[0.22em] text-charcoal/75 hover:text-rose-gold transition-colors"
+              className="text-[0.78rem] uppercase tracking-[0.22em] text-charcoal/75 hover:text-rose-gold transition-colors font-medium"
             >
               {l.label}
             </a>
           ))}
         </nav>
-        <a href="#contact" className="btn-luxury btn-luxury-hover text-[0.7rem] py-2.5 px-5">
-          Consult
-        </a>
+
+        {/* Actions */}
+        <div className="flex items-center gap-2 sm:gap-3.5">
+          <LanguageToggle />
+          <a
+            href="#contact"
+            className="btn-luxury btn-luxury-hover text-[0.65rem] sm:text-[0.7rem] py-1.5 sm:py-2.5 px-3 sm:px-5 shrink-0 hidden xs:inline-flex"
+          >
+            {t.nav.consult}
+          </a>
+
+          {/* Mobile hamburger button */}
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle navigation menu"
+            className="md:hidden flex items-center justify-center w-8 h-8 rounded-full border border-warm-border bg-pearl/90 text-charcoal hover:text-rose-gold-deep transition-colors"
+          >
+            {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+          </button>
+        </div>
       </div>
+
+      {/* Mobile Drawer Menu */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.98 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="md:hidden mt-2 mx-auto max-w-[1400px] pointer-events-auto rounded-2xl glass-panel bg-ivory/95 backdrop-blur-xl border border-warm-border p-5 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.12)]"
+          >
+            <div className="flex flex-col space-y-3.5">
+              {links.map((l) => (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-sm font-medium tracking-[0.16em] uppercase text-charcoal/80 hover:text-rose-gold-deep py-1.5 border-b border-warm-border/40 transition-colors"
+                >
+                  {l.label}
+                </a>
+              ))}
+              <div className="pt-2">
+                <a
+                  href="#contact"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="btn-luxury btn-luxury-hover w-full justify-center text-xs py-2.5 text-center"
+                >
+                  {t.nav.consult}
+                </a>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
 
 /* ---------- Hero ---------- */
 function Hero() {
+  const { t } = useLanguage();
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], [0, 120]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, 80]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   return (
-    <section id="top" ref={ref} className="relative overflow-hidden pt-40 md:pt-48 pb-24 md:pb-32">
-      <div className="pointer-events-none absolute -top-40 -right-40 w-[520px] h-[520px] rounded-full opacity-40"
+    <section id="top" ref={ref} className="relative overflow-hidden pt-28 sm:pt-24 md:pt-28 pb-16 sm:pb-24 md:pb-24">
+      <div className="pointer-events-none absolute -top-40 -right-40 w-[360px] sm:w-[520px] h-[360px] sm:h-[520px] rounded-full opacity-40"
            style={{ background: "radial-gradient(closest-side, var(--champagne), transparent 70%)" }} />
-      <div className="pointer-events-none absolute top-1/2 -left-40 w-[420px] h-[420px] rounded-full opacity-30"
+      <div className="pointer-events-none absolute top-1/2 -left-40 w-[300px] sm:w-[420px] h-[300px] sm:h-[420px] rounded-full opacity-30"
            style={{ background: "radial-gradient(closest-side, color-mix(in oklab, var(--rose-gold) 60%, transparent), transparent 70%)" }} />
 
-      <div className="mx-auto max-w-[1400px] px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
         <motion.div style={{ opacity }} className="lg:col-span-6 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="flex items-center gap-3 mb-8"
+            className="flex items-center gap-3 mb-5 sm:mb-8"
           >
             <span className="rose-divider" />
-            <span className="eyebrow">Bespoke Digital Atelier</span>
+            <span className="eyebrow">{t.hero.eyebrow}</span>
           </motion.div>
 
           <motion.h1
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: [0.2, 0.7, 0.2, 1] }}
-            className="text-display text-[2.75rem] sm:text-[3.5rem] lg:text-[4.75rem] leading-[1.02] text-charcoal"
+            transition={{ duration: 0.8, ease: [0.2, 0.7, 0.2, 1] }}
+            className="text-display text-[2.15rem] xs:text-[2.65rem] sm:text-[3.5rem] lg:text-[4.75rem] leading-[1.08] sm:leading-[1.02] text-charcoal"
           >
             Crafting <em className="text-serif italic text-rose-gold-deep">exceptional</em>
             <br />
@@ -148,83 +239,63 @@ function Hero() {
           </motion.h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 24 }}
+            key={t.hero.desc}
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.15 }}
-            className="mt-8 max-w-xl text-[1.05rem] leading-[1.75] text-charcoal/70"
+            transition={{ duration: 0.5 }}
+            className="mt-5 sm:mt-8 max-w-xl text-[0.95rem] sm:text-[1.05rem] leading-[1.7] sm:leading-[1.75] text-charcoal/70"
           >
-            KencanaDigital creates premium websites, enterprise software, and digital
-            experiences designed for brands that value quality, elegance, and long-term
-            growth.
+            {t.hero.desc}
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.3 }}
-            className="mt-10 flex flex-wrap items-center gap-4"
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="mt-7 sm:mt-10 flex flex-col xs:flex-row items-stretch xs:items-center gap-3.5 sm:gap-4"
           >
-            <a href="#contact" className="btn-luxury btn-luxury-hover">
-              Start Your Project <ArrowUpRight className="w-4 h-4" />
+            <a href="#contact" className="btn-luxury btn-luxury-hover justify-center text-center">
+              {t.hero.ctaPrimary} <ArrowUpRight className="w-4 h-4" />
             </a>
-            <a href="#portfolio" className="btn-ghost-luxury">View Portfolio</a>
+            <a href="#experience" className="btn-ghost-luxury justify-center text-center">{t.hero.ctaSecondary}</a>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 1.2, delay: 0.6 }}
-            className="mt-16 flex items-center gap-8"
+            transition={{ duration: 1.0, delay: 0.4 }}
+            className="mt-10 sm:mt-16 grid grid-cols-3 gap-2 sm:gap-6 border-t border-warm-border pt-6 sm:pt-8"
           >
-            <div>
-              <div className="text-display text-3xl text-charcoal">08<span className="text-rose-gold">+</span></div>
-              <div className="text-[0.7rem] uppercase tracking-[0.24em] text-charcoal/55 mt-1">Years</div>
+            <div className="text-center sm:text-left">
+              <div className="text-display text-2xl sm:text-3xl text-charcoal">3<span className="text-rose-gold">+</span></div>
+              <div className="text-[0.62rem] sm:text-[0.7rem] uppercase tracking-[0.16em] sm:tracking-[0.24em] text-charcoal/55 mt-1">{t.hero.years}</div>
             </div>
-            <div className="w-px h-10 bg-warm-border" style={{ background: "var(--warm-border)" }} />
-            <div>
-              <div className="text-display text-3xl text-charcoal">100<span className="text-rose-gold">+</span></div>
-              <div className="text-[0.7rem] uppercase tracking-[0.24em] text-charcoal/55 mt-1">Projects</div>
+            <div className="text-center sm:text-left border-x border-warm-border px-2 sm:px-6">
+              <div className="text-display text-2xl sm:text-3xl text-charcoal">10<span className="text-rose-gold">+</span></div>
+              <div className="text-[0.62rem] sm:text-[0.7rem] uppercase tracking-[0.16em] sm:tracking-[0.24em] text-charcoal/55 mt-1">{t.hero.projects}</div>
             </div>
-            <div className="w-px h-10" style={{ background: "var(--warm-border)" }} />
-            <div>
-              <div className="text-display text-3xl text-charcoal">98<span className="text-rose-gold">%</span></div>
-              <div className="text-[0.7rem] uppercase tracking-[0.24em] text-charcoal/55 mt-1">Satisfaction</div>
+            <div className="text-center sm:text-left pl-2 sm:pl-0">
+              <div className="text-display text-2xl sm:text-3xl text-charcoal">98<span className="text-rose-gold">%</span></div>
+              <div className="text-[0.62rem] sm:text-[0.7rem] uppercase tracking-[0.16em] sm:tracking-[0.24em] text-charcoal/55 mt-1">{t.hero.satisfaction}</div>
             </div>
           </motion.div>
         </motion.div>
 
         <motion.div style={{ y }} className="lg:col-span-6 relative">
           <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
+            initial={{ opacity: 0, scale: 0.97 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.1, ease: [0.2, 0.7, 0.2, 1] }}
-            className="relative rounded-[2rem] overflow-hidden shadow-[0_40px_100px_-30px_rgba(142,92,103,0.35)]"
+            transition={{ duration: 1.0, ease: [0.2, 0.7, 0.2, 1] }}
+            className="relative rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden shadow-[0_30px_70px_-25px_rgba(142,92,103,0.35)]"
           >
             <img
               src={heroImg}
               alt="Luxury workspace with editorial digital design"
               width={1600}
               height={1200}
-              className="w-full h-[520px] md:h-[620px] object-cover"
+              className="w-full h-[320px] xs:h-[400px] sm:h-[500px] md:h-[620px] object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-tr from-charcoal/10 via-transparent to-transparent" />
-          </motion.div>
-
-          {/* Floating badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.7 }}
-            className="hidden md:flex absolute -left-6 bottom-10 glass-panel rounded-2xl px-5 py-4 items-center gap-3 shadow-[var(--shadow-lift)]"
-          >
-            <div className="w-10 h-10 rounded-full grid place-items-center"
-                 style={{ background: "linear-gradient(135deg, var(--rose-gold), var(--gold-soft))" }}>
-              <Sparkles className="w-4 h-4 text-white" />
-            </div>
-            <div>
-              <div className="text-[0.72rem] uppercase tracking-[0.22em] text-charcoal/60">Awarded</div>
-              <div className="text-sm text-charcoal">Design Excellence, 2025</div>
-            </div>
           </motion.div>
         </motion.div>
       </div>
@@ -249,23 +320,23 @@ function Section({
   className?: string;
 }) {
   return (
-    <section id={id} className={`py-24 md:py-32 ${className}`}>
-      <div className="mx-auto max-w-[1400px] px-6 md:px-10">
+    <section id={id} className={`py-16 sm:py-24 md:py-32 scroll-mt-20 sm:scroll-mt-24 ${className}`}>
+      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10">
         {(eyebrow || title) && (
-          <div className="max-w-3xl mb-16 md:mb-20">
+          <div className="max-w-3xl mb-10 sm:mb-16 md:mb-20">
             {eyebrow && (
-              <div className="flex items-center gap-3 mb-6">
+              <div className="flex items-center gap-3 mb-4 sm:mb-6">
                 <span className="rose-divider" />
                 <span className="eyebrow">{eyebrow}</span>
               </div>
             )}
             {title && (
-              <h2 className="text-display text-[2rem] sm:text-[2.75rem] lg:text-[3.5rem] text-charcoal leading-[1.05]">
+              <h2 className="text-display text-[1.85rem] xs:text-[2.25rem] sm:text-[2.75rem] lg:text-[3.5rem] text-charcoal leading-[1.1] sm:leading-[1.05]">
                 {title}
               </h2>
             )}
             {intro && (
-              <p className="mt-6 text-[1.02rem] leading-[1.8] text-charcoal/70 max-w-2xl">{intro}</p>
+              <p className="mt-4 sm:mt-6 text-[0.95rem] sm:text-[1.02rem] leading-[1.7] sm:leading-[1.8] text-charcoal/70 max-w-2xl">{intro}</p>
             )}
           </div>
         )}
@@ -275,7 +346,7 @@ function Section({
   );
 }
 
-/* ---------- Reveal (solitaire card-deal) ---------- */
+/* ---------- Reveal (smooth luxury fade) ---------- */
 function Reveal({
   children,
   delay = 0,
@@ -286,23 +357,17 @@ function Reveal({
   className?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const inView = useInView(ref, { once: true, margin: "-40px" });
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: -60, x: -40, rotate: -8, scale: 0.9 }}
-      animate={
-        inView
-          ? { opacity: 1, y: 0, x: 0, rotate: 0, scale: 1 }
-          : {}
-      }
+      initial={{ opacity: 0, y: 24 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{
-        duration: 0.75,
+        duration: 0.65,
         delay,
         ease: [0.22, 1, 0.36, 1],
-        opacity: { duration: 0.5, delay },
       }}
-      style={{ transformOrigin: "top left", transformPerspective: 1200 }}
       className={className}
     >
       {children}
@@ -310,51 +375,40 @@ function Reveal({
   );
 }
 
-
 /* ---------- About ---------- */
 function About() {
-  const pillars = [
-    { t: "Attention to Detail", d: "Every pixel, transition, and line of code refined with the patience of a master craftsman." },
-    { t: "Long-term Partnerships", d: "We stay by your side, evolving your product through every chapter of growth." },
-    { t: "Premium Craftsmanship", d: "Bespoke systems built to endure — engineered with restraint and elegance." },
-    { t: "Reliable Delivery", d: "Predictable timelines, transparent communication, uncompromising standards." },
-  ];
+  const { t } = useLanguage();
+
   return (
     <Section
       id="about"
-      eyebrow="The Atelier"
+      eyebrow={t.about.eyebrow}
       title={<>An atelier for <em className="text-serif italic text-rose-gold-deep">brands</em> that value quiet excellence.</>}
     >
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 lg:gap-20 items-start">
         <Reveal className="lg:col-span-5">
           <div className="relative">
-            <div className="rounded-[1.75rem] overflow-hidden">
+            <div className="rounded-[1.25rem] sm:rounded-[1.75rem] overflow-hidden shadow-[0_20px_50px_-20px_rgba(142,92,103,0.25)]">
               <img src={aboutImg} alt="Design studio interior"
                    width={1200} height={1400} loading="lazy"
-                   className="w-full h-[520px] object-cover" />
-            </div>
-            <div className="absolute -bottom-6 -right-6 glass-panel rounded-2xl px-6 py-5 hidden md:block">
-              <div className="text-display text-2xl text-charcoal">Est. 2017</div>
-              <div className="text-[0.7rem] uppercase tracking-[0.22em] text-charcoal/60 mt-1">Jakarta · Global</div>
+                   className="w-full h-[300px] xs:h-[380px] sm:h-[460px] md:h-[520px] object-cover" />
             </div>
           </div>
         </Reveal>
 
         <div className="lg:col-span-7 lg:col-start-6">
           <Reveal>
-            <p className="text-serif text-[1.4rem] md:text-[1.6rem] leading-[1.55] text-charcoal/85">
-              KencanaDigital is a studio of designers, engineers and strategists devoted
-              to a single idea: that software, when made with care, becomes a lasting
-              expression of a brand's character.
+            <p className="text-serif text-[1.25rem] sm:text-[1.45rem] md:text-[1.6rem] leading-[1.5] sm:leading-[1.55] text-charcoal/85">
+              {t.about.mainText}
             </p>
           </Reveal>
-          <div className="mt-14 grid sm:grid-cols-2 gap-x-10 gap-y-10">
-            {pillars.map((p, i) => (
-              <Reveal key={p.t} delay={i * 0.08}>
+          <div className="mt-8 sm:mt-14 grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-8 sm:gap-y-10">
+            {t.about.pillars.map((p, i) => (
+              <Reveal key={p.t} delay={i * 0.06}>
                 <div>
-                  <div className="hairline mb-5" />
-                  <h3 className="text-display text-[1.35rem] text-charcoal mb-3">{p.t}</h3>
-                  <p className="text-[0.95rem] leading-[1.75] text-charcoal/65">{p.d}</p>
+                  <div className="hairline mb-4 sm:mb-5" />
+                  <h3 className="text-display text-[1.2rem] sm:text-[1.35rem] text-charcoal mb-2 sm:mb-3">{p.t}</h3>
+                  <p className="text-[0.9rem] sm:text-[0.95rem] leading-[1.7] sm:leading-[1.75] text-charcoal/65">{p.d}</p>
                 </div>
               </Reveal>
             ))}
@@ -367,22 +421,31 @@ function About() {
 
 /* ---------- Services ---------- */
 function Services() {
-  const services = [
-    { icon: Layers, t: "Premium Website Development", d: "Editorial, marketing and commerce sites tailored to your brand voice." },
-    { icon: Cpu, t: "Enterprise Applications", d: "Robust internal systems that scale with the complexity of your business." },
-    { icon: Smartphone, t: "Mobile Applications", d: "Native-quality iOS and Android products, refined to the last detail." },
-    { icon: PenTool, t: "UI/UX Design", d: "Interfaces conceived like architecture — considered, generous, humane." },
-    { icon: Palette, t: "Branding & Identity", d: "Visual systems that translate strategy into a coherent expression." },
-    { icon: Sparkles, t: "AI Solutions", d: "Intelligent workflows and assistants woven quietly into your product." },
-    { icon: Cloud, t: "Cloud Infrastructure", d: "Resilient, observable platforms built for continuous evolution." },
-    { icon: Compass, t: "Digital Consulting", d: "Strategy engagements that align product, brand and technology." },
+  const { t } = useLanguage();
+
+  const serviceIcons = [
+    Layers,
+    Cpu,
+    Smartphone,
+    PenTool,
+    Palette,
+    Sparkles,
+    Cloud,
+    Compass,
   ];
+
+  const services = t.services.items.map((item, idx) => ({
+    icon: serviceIcons[idx],
+    t: item.t,
+    d: item.d,
+  }));
+
   return (
     <Section
       id="services"
       eyebrow="Disciplines"
       title={<>A complete studio, under <em className="text-serif italic text-rose-gold-deep">one roof</em>.</>}
-      intro="From first concept to continuous evolution, every discipline required to shape a category-defining digital product lives inside the atelier."
+      intro={t.services.intro}
       className="bg-pearl/60"
     >
       <HoneycombServices services={services} />
@@ -424,18 +487,17 @@ function HoneycombCluster({
         const wPct = (W / vbW) * 100;
         const hPct = (H / vbH) * 100;
 
-        // Solitaire card-deal: cards fly in from top-left pile with rotation
-        const dealDelay = i * 0.07;
+        const dealDelay = i * 0.04;
 
         if (cell.deco) {
           return (
             <motion.div
               key={`d-${i}`}
-              initial={{ opacity: 0, x: -120, y: -160, rotate: -25, scale: 0.75 }}
-              whileInView={{ opacity: 1, x: 0, y: 0, rotate: 0, scale: 1 }}
-              viewport={{ once: true, margin: "-60px" }}
+              initial={{ opacity: 0, scale: 0.85 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, amount: 0.1 }}
               transition={{
-                duration: 0.7,
+                duration: 0.5,
                 delay: dealDelay,
                 ease: [0.22, 1, 0.36, 1],
               }}
@@ -455,7 +517,7 @@ function HoneycombCluster({
                   stroke="var(--rose-gold)"
                   strokeWidth="1.5"
                   strokeLinejoin="round"
-                  opacity="0.5"
+                  opacity="0.45"
                 />
               </svg>
             </motion.div>
@@ -467,15 +529,15 @@ function HoneycombCluster({
         return (
           <motion.div
             key={s.t}
-            initial={{ opacity: 0, x: -140, y: -180, rotate: -30, scale: 0.7 }}
-            whileInView={{ opacity: 1, x: 0, y: 0, rotate: 0, scale: 1 }}
-            viewport={{ once: true, margin: "-60px" }}
+            initial={{ opacity: 0, scale: 0.85, y: 12 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.1 }}
             transition={{
-              duration: 0.75,
+              duration: 0.55,
               delay: dealDelay,
               ease: [0.22, 1, 0.36, 1],
             }}
-            whileHover={{ y: -4, scale: 1.04, rotate: 0 }}
+            whileHover={{ y: -4, scale: 1.04 }}
             className="absolute cursor-default"
             style={{
               left: `${leftPct}%`,
@@ -485,19 +547,19 @@ function HoneycombCluster({
               transformOrigin: "center",
             }}
           >
-            <svg viewBox="0 0 100 115.47" preserveAspectRatio="none" className="absolute inset-0 w-full h-full">
+            <svg viewBox="0 0 100 115.47" preserveAspectRatio="none" className="absolute inset-0 w-full h-full drop-shadow-sm">
               <polygon
                 points="50,2 96,28.75 96,86.72 50,113.47 4,86.72 4,28.75"
                 fill="color-mix(in oklab, var(--rose-gold) 55%, white)"
                 stroke="var(--rose-gold-deep)"
-                strokeWidth="2.2"
+                strokeWidth="2"
                 strokeLinejoin="round"
               />
             </svg>
-            <div className="absolute inset-0 grid place-items-center text-center">
-              <div className="flex flex-col items-center gap-1 min-[360px]:gap-1.5 sm:gap-1.5 md:gap-2 w-[92%] sm:w-[80%]">
-                <HexIcon className="w-3.5 h-3.5 min-[360px]:w-4 min-[360px]:h-4 min-[400px]:w-4.5 min-[400px]:h-4.5 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white shrink-0" />
-                <span className="text-[0.44rem] min-[360px]:text-[0.5rem] min-[400px]:text-[0.56rem] sm:text-[0.6rem] md:text-[0.72rem] uppercase tracking-[0.02em] min-[360px]:tracking-[0.05em] sm:tracking-[0.1em] leading-[1.1] sm:leading-[1.15] text-white font-semibold break-words">
+            <div className="absolute inset-0 grid place-items-center text-center p-1 sm:p-2">
+              <div className="flex flex-col items-center justify-center gap-0.5 sm:gap-1.5 md:gap-2 w-[82%] sm:w-[80%]">
+                <HexIcon className="w-3.5 h-3.5 min-[360px]:w-4 min-[360px]:h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white shrink-0" />
+                <span className="text-[0.42rem] min-[360px]:text-[0.46rem] min-[400px]:text-[0.52rem] sm:text-[0.62rem] md:text-[0.7rem] uppercase tracking-[0.01em] min-[360px]:tracking-[0.03em] sm:tracking-[0.08em] leading-[1.12] sm:leading-[1.15] text-white font-semibold break-words">
                   {s.t}
                 </span>
               </div>
@@ -510,30 +572,22 @@ function HoneycombCluster({
 }
 
 function HoneycombServices({ services }: { services: { icon: React.ElementType; t: string; d: string }[] }) {
-  // Unified honeycomb matching reference image. Pointy-top with row offset 0.5.
-  // Service indices: 0=Website Dev, 1=Enterprise, 2=Mobile, 3=UI/UX, 4=Branding,
-  //                  5=AI, 6=Cloud, 7=Digital Consulting
-
   const desktopCells: Cell[] = [
-    // Row 0 — top: 3 outlines on the left, 2 filled on the right
     { c: 0.5, r: 0, deco: true },
     { c: 1.5, r: 0, deco: true },
     { c: 2.5, r: 0, deco: true },
-    { c: 3.5, r: 0, s: 0 }, // Website Development
-    { c: 4.5, r: 0, s: 1 }, // Enterprise Applications
-    // Row 1 — 3 filled center flanked by outlines
+    { c: 3.5, r: 0, s: 0 },
+    { c: 4.5, r: 0, s: 1 },
     { c: 0, r: 1, deco: true },
-    { c: 1, r: 1, s: 2 }, // Mobile Apps
-    { c: 2, r: 1, s: 3 }, // UI/UX Design
-    { c: 3, r: 1, s: 4 }, // Branding & Identity
+    { c: 1, r: 1, s: 2 },
+    { c: 2, r: 1, s: 3 },
+    { c: 3, r: 1, s: 4 },
     { c: 4, r: 1, deco: true },
-    // Row 2 — 3 filled on the left, 2 outlines right
-    { c: 0.5, r: 2, s: 5 }, // AI Solutions
-    { c: 1.5, r: 2, s: 6 }, // Cloud Infrastructure
-    { c: 2.5, r: 2, s: 7 }, // Digital Consulting
+    { c: 0.5, r: 2, s: 5 },
+    { c: 1.5, r: 2, s: 6 },
+    { c: 2.5, r: 2, s: 7 },
     { c: 3.5, r: 2, deco: true },
     { c: 4.5, r: 2, deco: true },
-    // Row 3 — bottom decorative row
     { c: 1, r: 3, deco: true },
     { c: 2, r: 3, deco: true },
     { c: 3, r: 3, deco: true },
@@ -541,81 +595,59 @@ function HoneycombServices({ services }: { services: { icon: React.ElementType; 
   ];
 
   const mobileCells: Cell[] = [
-    // Row 0
-    { c: -0.5, r: 0, deco: true },
-    { c: 0.5, r: 0, s: 0 }, // Website Development
-    { c: 1.5, r: 0, s: 1 }, // Enterprise Applications
+    { c: 0.5, r: 0, deco: true },
+    { c: 1.5, r: 0, s: 0 },
     { c: 2.5, r: 0, deco: true },
-    // Row 1
-    { c: 0, r: 1, s: 2 }, // Mobile Apps
-    { c: 1, r: 1, s: 3 }, // UI/UX Design
-    { c: 2, r: 1, s: 4 }, // Branding & Identity
-    // Row 2
-    { c: -0.5, r: 2, deco: true },
-    { c: 0.5, r: 2, s: 5 }, // AI Solutions
-    { c: 1.5, r: 2, s: 6 }, // Cloud Infrastructure
-    { c: 2.5, r: 2, deco: true },
-    // Row 3
-    { c: 0, r: 3, s: 7 }, // Digital Consulting
-    { c: 1, r: 3, deco: true },
+    { c: 0, r: 1, s: 1 },
+    { c: 1, r: 1, deco: true },
+    { c: 2, r: 1, s: 2 },
+    { c: 3, r: 1, deco: true },
+    { c: 0.5, r: 2, s: 3 },
+    { c: 1.5, r: 2, s: 4 },
+    { c: 2.5, r: 2, s: 5 },
+    { c: 0, r: 3, deco: true },
+    { c: 1, r: 3, s: 6 },
     { c: 2, r: 3, deco: true },
+    { c: 3, r: 3, s: 7 },
+    { c: 1.5, r: 4, deco: true },
+    { c: 2.5, r: 4, deco: true },
   ];
 
   return (
     <div className="mx-auto w-full max-w-4xl">
-      {/* Desktop view */}
       <HoneycombCluster
         services={services}
         cells={desktopCells}
-        className="hidden sm:block mx-auto w-full"
+        className="hidden md:block mx-auto w-full"
       />
-      {/* Mobile view */}
       <HoneycombCluster
         services={services}
         cells={mobileCells}
-        className="block sm:hidden mx-auto w-[96%]"
+        className="block md:hidden mx-auto w-full max-w-[380px] xs:max-w-[440px]"
       />
     </div>
   );
 }
 
-
-
-
 /* ---------- Portfolio ---------- */
-function Portfolio() {
-  const projects = [
-    {
-      img: portfolio1,
-      cat: "Editorial Commerce",
-      industry: "Luxury Beauty",
-      title: "Maison Célestine",
-      tech: "Next.js · Shopify · Sanity",
-      overview: "A poetic commerce experience for a heritage French skincare house.",
-    },
-    {
-      img: portfolio2,
-      cat: "Mobile Application",
-      industry: "Private Banking",
-      title: "Auréum Wealth",
-      tech: "React Native · Kotlin · Swift",
-      overview: "A calm, considered wealth companion for high-net-worth clients.",
-    },
-    {
-      img: portfolio3,
-      cat: "Enterprise Platform",
-      industry: "Hospitality Group",
-      title: "Loggia Operations Suite",
-      tech: "Next.js · PostgreSQL · AWS",
-      overview: "An operations backbone connecting twenty-three properties worldwide.",
-    },
-  ];
+function Experience() {
+  const { t } = useLanguage();
+
+  const projects = t.experience.projects.map((p) => ({
+    cat: p.cat,
+    industry: p.industry,
+    title: p.title,
+    tech: p.tech,
+    overview: p.overview,
+  }));
+
+
   return (
     <Section
-      id="portfolio"
-      eyebrow="Selected Work"
+      id="experience"
+      eyebrow={t.experience.eyebrow}
       title={<>Objects of <em className="text-serif italic text-rose-gold-deep">quiet</em> distinction.</>}
-      intro="A curated selection of engagements — each a collaboration with founders and teams who share our devotion to craft."
+      intro={t.experience.intro}
     >
       {/* Mobile: swipeable auto-slider */}
       <div className="md:hidden">
@@ -631,9 +663,25 @@ function Portfolio() {
             }`}>
               <div className="lg:col-span-7">
                 <motion.div whileHover={{ y: -6 }} transition={{ duration: 0.5 }}
-                            className="rounded-[1.5rem] overflow-hidden shadow-[0_30px_70px_-30px_rgba(142,92,103,0.28)]">
-                  <img src={p.img} alt={p.title} width={1200} height={900} loading="lazy"
-                       className="w-full h-[380px] md:h-[500px] object-cover" />
+                            className="rounded-[1.5rem] overflow-hidden shadow-[0_30px_70px_-30px_rgba(142,92,103,0.28)] relative">
+                  <video
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="w-full h-[380px] md:h-[500px] object-cover bg-charcoal/10"
+                  >
+                    <source src="" type="video/mp4" />
+                  </video>
+                  {/* Placeholder overlay when no video source */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-champagne/40 via-pearl/60 to-ivory/40 backdrop-blur-[2px]">
+                    <div className="w-16 h-16 rounded-full border-2 border-rose-gold-deep/50 flex items-center justify-center bg-white/60 shadow-lg">
+                      <svg className="w-6 h-6 text-rose-gold-deep ml-1" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    </div>
+                    <span className="eyebrow text-charcoal/50 text-[0.65rem]">Video Coming Soon</span>
+                  </div>
                 </motion.div>
               </div>
               <div className="lg:col-span-5">
@@ -648,7 +696,7 @@ function Portfolio() {
                 </div>
                 <a href="#contact"
                    className="mt-8 inline-flex items-center gap-2 text-[0.78rem] uppercase tracking-[0.22em] text-charcoal gold-underline pb-1 hover:text-rose-gold-deep transition-colors">
-                  View case study <ArrowUpRight className="w-4 h-4" />
+                  {t.experience.viewCaseStudy} <ArrowUpRight className="w-4 h-4" />
                 </a>
               </div>
             </div>
@@ -660,7 +708,6 @@ function Portfolio() {
 }
 
 type Project = {
-  img: string;
   cat: string;
   industry: string;
   title: string;
@@ -668,7 +715,9 @@ type Project = {
   overview: string;
 };
 
+
 function PortfolioSlider({ projects }: { projects: Project[] }) {
+  const { t } = useLanguage();
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const count = projects.length;
@@ -689,7 +738,7 @@ function PortfolioSlider({ projects }: { projects: Project[] }) {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div className="overflow-hidden rounded-[1.5rem]">
+      <div className="overflow-hidden rounded-[1.25rem] sm:rounded-[1.5rem]">
         <motion.div
           className="flex"
           animate={{ x: `-${index * 100}%` }}
@@ -699,36 +748,51 @@ function PortfolioSlider({ projects }: { projects: Project[] }) {
           dragElastic={0.18}
           onDragStart={() => setPaused(true)}
           onDragEnd={(_, info) => {
-            const threshold = 60;
+            const threshold = 50;
             if (info.offset.x < -threshold) go(index + 1);
             else if (info.offset.x > threshold) go(index - 1);
-            // brief pause then resume
             window.setTimeout(() => setPaused(false), 800);
           }}
         >
           {projects.map((p) => (
-            <div key={p.title} className="min-w-full px-1">
-              <div className="rounded-[1.5rem] overflow-hidden shadow-[0_30px_70px_-30px_rgba(142,92,103,0.28)]">
-                <img
-                  src={p.img}
-                  alt={p.title}
-                  width={1200}
-                  height={900}
-                  loading="lazy"
+            <div key={p.title} className="min-w-full px-0.5">
+              <div className="rounded-[1.25rem] sm:rounded-[1.5rem] overflow-hidden shadow-[0_20px_50px_-20px_rgba(142,92,103,0.25)] relative">
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
                   draggable={false}
-                  className="w-full h-[280px] sm:h-[340px] object-cover select-none pointer-events-none"
-                />
+                  className="w-full h-[220px] xs:h-[280px] sm:h-[340px] object-cover select-none pointer-events-none bg-charcoal/10"
+                >
+                  <source src="" type="video/mp4" />
+                </video>
+                {/* Placeholder overlay when no video source */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2.5 bg-gradient-to-br from-champagne/40 via-pearl/60 to-ivory/40 backdrop-blur-[2px]">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border-2 border-rose-gold-deep/50 flex items-center justify-center bg-white/60 shadow-lg">
+                    <svg className="w-5 h-5 text-rose-gold-deep ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </div>
+                  <span className="eyebrow text-charcoal/50 text-[0.6rem]">Video Coming Soon</span>
+                </div>
               </div>
-              <div className="mt-6 px-1">
-                <div className="eyebrow mb-3">{p.cat} — {p.industry}</div>
-                <h3 className="text-display text-[1.75rem] sm:text-[2rem] text-charcoal leading-[1.05]">
+              <div className="mt-5 px-1">
+                <div className="eyebrow mb-2 sm:mb-3">{p.cat} — {p.industry}</div>
+                <h3 className="text-display text-[1.5rem] xs:text-[1.75rem] sm:text-[2rem] text-charcoal leading-[1.1]">
                   {p.title}
                 </h3>
-                <div className="hairline my-5" />
-                <p className="text-[0.98rem] leading-[1.75] text-charcoal/70">{p.overview}</p>
-                <div className="mt-5 text-[0.72rem] tracking-[0.14em] uppercase text-charcoal/55">
+                <div className="hairline my-4" />
+                <p className="text-[0.92rem] sm:text-[0.98rem] leading-[1.7] text-charcoal/70">{p.overview}</p>
+                <div className="mt-4 text-[0.7rem] tracking-[0.14em] uppercase text-charcoal/55">
                   {p.tech}
                 </div>
+                <a
+                  href="#contact"
+                  className="mt-5 inline-flex items-center gap-2 text-[0.72rem] uppercase tracking-[0.2em] text-charcoal gold-underline pb-1 hover:text-rose-gold-deep transition-colors"
+                >
+                  {t.experience.viewCaseStudy} <ArrowUpRight className="w-3.5 h-3.5" />
+                </a>
               </div>
             </div>
           ))}
@@ -736,7 +800,7 @@ function PortfolioSlider({ projects }: { projects: Project[] }) {
       </div>
 
       {/* Dots */}
-      <div className="mt-8 flex items-center justify-center gap-2.5">
+      <div className="mt-6 sm:mt-8 flex items-center justify-center gap-2.5">
         {projects.map((_, i) => (
           <button
             key={i}
@@ -757,36 +821,35 @@ function PortfolioSlider({ projects }: { projects: Project[] }) {
   );
 }
 
-
+/* ---------- Process ---------- */
 function Process() {
-  const steps = [
-    "Discovery", "Strategy", "Design", "Development", "Quality Assurance", "Launch", "Continuous Growth",
-  ];
+  const { t } = useLanguage();
+
   return (
     <Section
       id="process"
-      eyebrow="The Method"
+      eyebrow={t.process.eyebrow || "The Method"}
       title={<>A measured process, from <em className="text-serif italic text-rose-gold-deep">first sketch</em> to lasting growth.</>}
       className="bg-pearl/60"
     >
       <div className="relative overflow-hidden md:overflow-visible">
-        <div className="flex md:grid md:grid-cols-7 overflow-x-auto md:overflow-x-visible pb-8 md:pb-0 gap-8 md:gap-x-6 snap-x snap-mandatory scrollbar-none relative py-4 px-4 md:px-0">
+        <div className="flex md:grid md:grid-cols-7 overflow-x-auto md:overflow-x-visible pb-6 md:pb-0 gap-6 md:gap-x-6 snap-x snap-mandatory scrollbar-none relative py-4 px-2 md:px-0">
           
           {/* Connecting Line */}
           <div 
-            className="absolute top-[54px] h-px pointer-events-none left-[81px] md:left-[50px] md:right-[50px] w-[972px] md:w-[calc(100%-100px)]"
+            className="absolute top-[48px] sm:top-[54px] h-px pointer-events-none left-[60px] md:left-[50px] md:right-[50px] w-[800px] md:w-[calc(100%-100px)]"
             style={{ background: "linear-gradient(90deg, var(--rose-gold) 20%, var(--gold-soft) 80%)" }} 
           />
           
-          {steps.map((s, i) => (
-            <Reveal key={s} delay={i * 0.05} className="snap-center shrink-0 min-w-[130px] md:min-w-0 z-10">
+          {t.process.steps.map((s, i) => (
+            <Reveal key={s} delay={i * 0.05} className="snap-center shrink-0 min-w-[120px] xs:min-w-[130px] md:min-w-0 z-10">
               <div className="flex flex-col items-center text-center">
-                <div className="relative w-[76px] h-[76px] rounded-full grid place-items-center bg-ivory border border-warm-border"
-                     style={{ boxShadow: "0 12px 30px -12px rgba(142,92,103,0.25)" }}>
-                  <span className="text-serif italic text-rose-gold-deep text-xl">0{i + 1}</span>
+                <div className="relative w-[64px] h-[64px] sm:w-[76px] sm:h-[76px] rounded-full grid place-items-center bg-ivory border border-warm-border shadow-sm"
+                     style={{ boxShadow: "0 10px 24px -10px rgba(142,92,103,0.25)" }}>
+                  <span className="text-serif italic text-rose-gold-deep text-lg sm:text-xl">0{i + 1}</span>
                 </div>
-                <div className="mt-6 text-[0.72rem] uppercase tracking-[0.24em] text-charcoal/60">Phase</div>
-                <div className="mt-1 text-display text-lg text-charcoal">{s}</div>
+                <div className="mt-4 sm:mt-6 text-[0.65rem] sm:text-[0.72rem] uppercase tracking-[0.2em] sm:tracking-[0.24em] text-charcoal/60">{t.process.phaseLabel}</div>
+                <div className="mt-1 text-display text-sm sm:text-lg text-charcoal font-medium">{s}</div>
               </div>
             </Reveal>
           ))}
@@ -811,98 +874,31 @@ function Counter({ to, suffix = "" }: { to: number; suffix?: string }) {
 }
 
 function WhyUs() {
+  const { t } = useLanguage();
+
   const stats = [
-    { n: 100, suf: "+", label: "Projects Delivered" },
-    { n: 98, suf: "%", label: "Client Satisfaction" },
-    { n: 8, suf: "+", label: "Years of Craft" },
-    { n: 24, suf: "/7", label: "Technical Support" },
+    { n: 10, suf: "+", label: t.whyUs.stats[0].label },
+    { n: 98, suf: "%", label: t.whyUs.stats[1].label },
+    { n: 3, suf: "+", label: t.whyUs.stats[2].label },
+    { n: 24, suf: "/7", label: t.whyUs.stats[3].label },
   ];
+
   return (
     <Section
-      eyebrow="Why KencanaDigital"
+      eyebrow={t.whyUs.eyebrow || "Why Kencana Digital"}
       title={<>Craft, measured in <em className="text-serif italic text-rose-gold-deep">outcomes</em>.</>}
     >
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 xs:gap-6 sm:gap-8">
         {stats.map((s, i) => (
-          <Reveal key={s.label} delay={i * 0.08}>
-            <div className="border-t border-warm-border pt-8">
-              <div className="text-display text-[3.5rem] md:text-[4.5rem] leading-none text-charcoal">
+          <Reveal key={s.label} delay={i * 0.06}>
+            <div className="border-t border-warm-border pt-5 sm:pt-8">
+              <div className="text-display text-[2.25rem] xs:text-[3rem] sm:text-[3.5rem] md:text-[4.5rem] leading-none text-charcoal">
                 <Counter to={s.n} suffix={s.suf} />
               </div>
-              <div className="mt-5 text-[0.75rem] uppercase tracking-[0.24em] text-charcoal/60">{s.label}</div>
+              <div className="mt-3 sm:mt-5 text-[0.65rem] sm:text-[0.75rem] uppercase tracking-[0.18em] sm:tracking-[0.24em] text-charcoal/60">{s.label}</div>
             </div>
           </Reveal>
         ))}
-      </div>
-
-      {/* Client logos */}
-      <div className="mt-24">
-        <div className="text-center eyebrow mb-10">Trusted by discerning brands</div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-x-8 gap-y-6 opacity-60">
-          {["Maison Céleste", "Auréum", "Loggia", "Verdant & Co.", "Noir Atelier", "Solstice"].map((c) => (
-            <div key={c} className="text-center text-serif italic text-charcoal/70 text-lg">{c}</div>
-          ))}
-        </div>
-      </div>
-    </Section>
-  );
-}
-
-/* ---------- Testimonials ---------- */
-function Testimonials() {
-  const items = [
-    {
-      q: "They approached our brand as if it were their own — every detail considered, nothing rushed. The result feels timeless.",
-      n: "Amara Salim", r: "CEO, Maison Céleste",
-    },
-    {
-      q: "The most professional studio we've engaged. Their sense of craft is matched only by the reliability of their delivery.",
-      n: "Rendra Wibowo", r: "Head of Product, Auréum Wealth",
-    },
-    {
-      q: "KencanaDigital didn't just deliver software — they elevated how our teams work every day.",
-      n: "Iselin Marchetti", r: "COO, Loggia Group",
-    },
-  ];
-  const [idx, setIdx] = useState(0);
-  useEffect(() => {
-    const t = setInterval(() => setIdx((i) => (i + 1) % items.length), 6500);
-    return () => clearInterval(t);
-  }, [items.length]);
-  return (
-    <Section
-      eyebrow="In Their Words"
-      title={<>A partnership <em className="text-serif italic text-rose-gold-deep">defined</em> by trust.</>}
-      className="bg-pearl/60"
-    >
-      <div className="max-w-4xl mx-auto text-center relative">
-        <Quote className="w-14 h-14 text-rose-gold/40 mx-auto mb-8" strokeWidth={1} />
-        <motion.blockquote
-          key={idx}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="text-serif text-[1.55rem] md:text-[2rem] leading-[1.45] text-charcoal/90 italic"
-        >
-          "{items[idx].q}"
-        </motion.blockquote>
-        <div className="mt-10 flex flex-col items-center gap-1">
-          <div className="text-display text-lg text-charcoal">{items[idx].n}</div>
-          <div className="text-[0.72rem] uppercase tracking-[0.24em] text-charcoal/55">{items[idx].r}</div>
-        </div>
-        <div className="mt-10 flex justify-center gap-2">
-          {items.map((_, i) => (
-            <button
-              key={i}
-              aria-label={`Show testimonial ${i + 1}`}
-              onClick={() => setIdx(i)}
-              className={`h-[3px] rounded-full transition-all ${
-                i === idx ? "w-10 bg-rose-gold-deep" : "w-5 bg-charcoal/15"
-              }`}
-              style={{ backgroundColor: i === idx ? "var(--rose-gold-deep)" : undefined }}
-            />
-          ))}
-        </div>
       </div>
     </Section>
   );
@@ -910,47 +906,38 @@ function Testimonials() {
 
 /* ---------- FAQ ---------- */
 function FAQ() {
-  const faqs = [
-    { q: "What kinds of engagements do you take on?",
-      a: "We partner with a small number of clients each year on bespoke websites, enterprise applications, mobile products, and brand systems — typically starting from strategy and continuing into long-term evolution." },
-    { q: "How long does a typical project take?",
-      a: "Marketing sites range from six to ten weeks. Product and enterprise engagements are typically four to six months for a first release, followed by continuous partnership." },
-    { q: "Do you work with brands outside Indonesia?",
-      a: "Yes. We operate globally and are fluent in remote and in-person collaboration. Our team spans multiple time zones." },
-    { q: "What does the investment look like?",
-      a: "Every engagement is tailored. Following an initial consultation, we prepare a considered proposal with clear scope, timeline, and investment." },
-    { q: "Will we own the work?",
-      a: "Absolutely. Upon completion, all intellectual property, code, and design assets belong to you." },
-  ];
+  const { t } = useLanguage();
+  const faqs = t.faq.faqs;
   const [open, setOpen] = useState<number | null>(0);
+
   return (
     <Section
-      eyebrow="Questions"
+      eyebrow={t.faq.eyebrow || "Questions"}
       title={<>Considerations, <em className="text-serif italic text-rose-gold-deep">answered</em>.</>}
     >
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-3xl mx-auto"> 
         {faqs.map((f, i) => {
           const isOpen = open === i;
           return (
             <div key={f.q} className="border-b border-warm-border">
               <button
                 onClick={() => setOpen(isOpen ? null : i)}
-                className="w-full py-7 flex items-center justify-between gap-6 text-left group"
+                className="w-full py-5 sm:py-7 flex items-center justify-between gap-4 sm:gap-6 text-left group"
               >
-                <span className="text-display text-lg md:text-[1.35rem] text-charcoal">
+                <span className="text-display text-base sm:text-lg md:text-[1.35rem] text-charcoal">
                   {f.q}
                 </span>
-                <span className="shrink-0 w-9 h-9 rounded-full border border-warm-border grid place-items-center transition-colors group-hover:border-rose-gold">
-                  {isOpen ? <Minus className="w-4 h-4 text-rose-gold-deep" /> : <Plus className="w-4 h-4 text-charcoal/70" />}
+                <span className="shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-warm-border grid place-items-center transition-colors group-hover:border-rose-gold">
+                  {isOpen ? <Minus className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-gold-deep" /> : <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-charcoal/70" />}
                 </span>
               </button>
               <motion.div
                 initial={false}
                 animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
-                transition={{ duration: 0.45, ease: [0.2, 0.7, 0.2, 1] }}
+                transition={{ duration: 0.4, ease: [0.2, 0.7, 0.2, 1] }}
                 className="overflow-hidden"
               >
-                <p className="pb-7 pr-16 text-[0.98rem] leading-[1.8] text-charcoal/70">{f.a}</p>
+                <p className="pb-5 sm:pb-7 pr-2 sm:pr-16 text-[0.92rem] sm:text-[0.98rem] leading-[1.7] sm:leading-[1.8] text-charcoal/70">{f.a}</p>
               </motion.div>
             </div>
           );
@@ -962,49 +949,50 @@ function FAQ() {
 
 /* ---------- Contact ---------- */
 function Contact() {
+  const { t } = useLanguage();
+
   return (
     <Section
       id="contact"
-      eyebrow="Begin the Conversation"
+      eyebrow={t.contact.eyebrow || "Begin the Conversation"}
       title={<>Let us craft something <em className="text-serif italic text-rose-gold-deep">enduring</em> together.</>}
-      intro="Share a note about your ambitions. We reply personally within one business day."
+      intro={t.contact.intro}
     >
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-14">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14">
         <div className="lg:col-span-7">
           <form
             onSubmit={(e) => e.preventDefault()}
-            className="card-luxury p-8 md:p-10 space-y-6"
+            className="card-luxury p-5 xs:p-7 sm:p-8 md:p-10 space-y-5 sm:space-y-6"
           >
-            <div className="grid sm:grid-cols-2 gap-6">
-              <Field label="Full name" placeholder="Your name" />
-              <Field label="Email" type="email" placeholder="you@brand.com" />
+            <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
+              <Field label={t.contact.fullName} placeholder={t.contact.fullNamePlaceholder} />
+              <Field label={t.contact.email} type="email" placeholder={t.contact.emailPlaceholder} />
             </div>
-            <div className="grid sm:grid-cols-2 gap-6">
-              <Field label="Company" placeholder="Brand or organisation" />
-              <Field label="Budget" placeholder="Indicative range" />
+            <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
+              <Field label={t.contact.company} placeholder={t.contact.companyPlaceholder} />
+              <Field label={t.contact.budget} placeholder={t.contact.budgetPlaceholder} />
             </div>
             <div>
-              <label className="eyebrow block mb-3">Project vision</label>
+              <label className="eyebrow block mb-2 sm:mb-3">{t.contact.vision}</label>
               <textarea
-                rows={5}
-                placeholder="Tell us about the world you'd like to build..."
-                className="w-full bg-transparent border-b border-warm-border py-3 text-[0.98rem] text-charcoal placeholder:text-charcoal/35 focus:outline-none focus:border-rose-gold-deep transition-colors"
+                rows={4}
+                placeholder={t.contact.visionPlaceholder}
+                className="w-full bg-transparent border-b border-warm-border py-2.5 sm:py-3 text-[0.95rem] sm:text-[0.98rem] text-charcoal placeholder:text-charcoal/35 focus:outline-none focus:border-rose-gold-deep transition-colors"
               />
             </div>
-            <button type="submit" className="btn-luxury btn-luxury-hover mt-4">
-              Request Consultation <ArrowUpRight className="w-4 h-4" />
+            <button type="submit" className="btn-luxury btn-luxury-hover mt-3 sm:mt-4 w-full sm:w-auto justify-center">
+              {t.contact.submit} <ArrowUpRight className="w-4 h-4" />
             </button>
           </form>
         </div>
 
-        <aside className="lg:col-span-5 space-y-8">
-          <ContactRow icon={MapPin} label="Studio" value="Kencana Tower, 12F · Jakarta, Indonesia" />
-          <ContactRow icon={Mail} label="Correspondence" value="atelier@kencanadigital.com" />
-          <ContactRow icon={MessageCircle} label="WhatsApp" value="+62 811 2000 210" />
-          <ContactRow icon={Clock} label="Hours" value="Mon – Fri · 09:00 – 18:00 WIB" />
+        <aside className="lg:col-span-5 space-y-6 sm:space-y-8">
+          <ContactRow icon={MapPin} label={t.contact.studio} value="Jl. Imogiri Timur, Gng. Tobanan V, dsn. Jati Rt 008, Wonokromo, Pleret, Bantul, D.I. Yogyakarta, Indonesia" />
+          <ContactRow icon={MessageCircle} label={t.contact.whatsapp} value="081227283990 " />
+          <ContactRow icon={Clock} label={t.contact.hours} value={t.contact.hoursValue} />
           <div className="hairline" />
-          <p className="text-serif italic text-charcoal/70 text-lg leading-relaxed">
-            "The considered response of a small studio, with the ambition of a global one."
+          <p className="text-serif italic text-charcoal/70 text-base sm:text-lg leading-relaxed">
+            {t.contact.quote}
           </p>
         </aside>
       </div>
@@ -1015,10 +1003,10 @@ function Contact() {
 function Field({ label, ...rest }: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <div>
-      <label className="eyebrow block mb-3">{label}</label>
+      <label className="eyebrow block mb-2 sm:mb-3">{label}</label>
       <input
         {...rest}
-        className="w-full bg-transparent border-b border-warm-border py-3 text-[0.98rem] text-charcoal placeholder:text-charcoal/35 focus:outline-none focus:border-rose-gold-deep transition-colors"
+        className="w-full bg-transparent border-b border-warm-border py-2 sm:py-3 text-[0.95rem] sm:text-[0.98rem] text-charcoal placeholder:text-charcoal/35 focus:outline-none focus:border-rose-gold-deep transition-colors"
       />
     </div>
   );
@@ -1026,14 +1014,14 @@ function Field({ label, ...rest }: { label: string } & React.InputHTMLAttributes
 
 function ContactRow({ icon: Icon, label, value }: { icon: any; label: string; value: string }) {
   return (
-    <div className="flex items-start gap-5">
-      <div className="w-11 h-11 rounded-full grid place-items-center shrink-0"
+    <div className="flex items-start gap-3.5 sm:gap-5">
+      <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full grid place-items-center shrink-0"
            style={{ background: "color-mix(in oklab, var(--champagne) 55%, white)" }}>
-        <Icon className="w-[18px] h-[18px] text-rose-gold-deep" />
+        <Icon className="w-4 h-4 sm:w-[18px] sm:h-[18px] text-rose-gold-deep" />
       </div>
       <div>
         <div className="eyebrow mb-1">{label}</div>
-        <div className="text-charcoal text-[1rem]">{value}</div>
+        <div className="text-charcoal text-[0.92rem] sm:text-[1rem] leading-snug">{value}</div>
       </div>
     </div>
   );
@@ -1041,43 +1029,45 @@ function ContactRow({ icon: Icon, label, value }: { icon: any; label: string; va
 
 /* ---------- Footer ---------- */
 function Footer() {
+  const { t } = useLanguage();
+
   return (
     <footer className="border-t border-warm-border mt-10">
-      <div className="mx-auto max-w-[1400px] px-6 md:px-10 py-16 grid grid-cols-1 md:grid-cols-12 gap-10">
-        <div className="md:col-span-5">
+      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-5 py-6 sm:py-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10">
+        <div className="sm:col-span-2 lg:col-span-5">
           <div className="flex items-center gap-2">
             <img
               src="/Logo.png"
-              alt="KencanaDigital Logo"
-              className="h-16 w-auto object-contain"
+              alt="Kencana Digital Logo"
+              className="h-22 sm:h-26 w-auto object-contain"
             />
           </div>
-          <p className="mt-5 text-[0.95rem] leading-[1.8] text-charcoal/65 max-w-md">
-            A bespoke digital atelier crafting websites, applications, and brand
-            systems for enterprises and founders who value enduring quality.
+          <p className="mt-4 sm:mt-5 text-[0.9rem] sm:text-[0.95rem] leading-[1.7] sm:leading-[1.8] text-charcoal/65 max-w-md">
+            {t.footer.desc}
           </p>
         </div>
-        <FooterCol title="Studio" items={["About", "Services", "Portfolio", "Process"]} />
-        <FooterCol title="Disciplines" items={["Web", "Mobile", "Enterprise", "Branding"]} />
-        <FooterCol title="Contact" items={["Consult", "WhatsApp", "Email", "Jakarta HQ"]} />
+        <FooterCol title={t.footer.colStudio} items={["About", "Services", "Experience", "Process"]} />
+        <FooterCol title={t.footer.colDisciplines} items={["Web", "Mobile", "Enterprise", "Branding"]} />
+        <FooterCol title={t.footer.colContact} items={["Consult", "WhatsApp", "Email", "Jakarta HQ"]} />
       </div>
       <div className="border-t border-warm-border">
-        <div className="mx-auto max-w-[1400px] px-6 md:px-10 py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-[0.78rem] text-charcoal/55">
-          <span>© {new Date().getFullYear()} KencanaDigital. All rights reserved.</span>
-          <span className="tracking-[0.22em] uppercase">Crafted with devotion in Jakarta</span>
+        <div className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 py-5 sm:py-6 flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left text-[0.72rem] sm:text-[0.78rem] text-charcoal/55">
+          <span>© {new Date().getFullYear()} Kencana Digital. {t.footer.rights}</span>
+          <span className="tracking-[0.2em] sm:tracking-[0.22em] uppercase">{t.footer.craftedIn}</span>
         </div>
       </div>
     </footer>
   );
 }
+
 function FooterCol({ title, items }: { title: string; items: string[] }) {
   return (
-    <div className="md:col-span-2">
-      <div className="eyebrow mb-5">{title}</div>
-      <ul className="space-y-3">
+    <div className="lg:col-span-2">
+      <div className="eyebrow mb-3 sm:mb-5">{title}</div>
+      <ul className="space-y-2 sm:space-y-3">
         {items.map((i) => (
           <li key={i}>
-            <a href="#" className="text-[0.92rem] text-charcoal/75 hover:text-rose-gold-deep transition-colors">{i}</a>
+            <a href="#" className="text-[0.88rem] sm:text-[0.92rem] text-charcoal/75 hover:text-rose-gold-deep transition-colors">{i}</a>
           </li>
         ))}
       </ul>
@@ -1087,6 +1077,8 @@ function FooterCol({ title, items }: { title: string; items: string[] }) {
 
 /* ---------- Floating consult ---------- */
 function FloatingConsult() {
+  const { t } = useLanguage();
+
   return (
     <a
       href="#contact"
@@ -1094,7 +1086,7 @@ function FloatingConsult() {
       style={{ background: "linear-gradient(135deg, var(--rose-gold-deep), var(--rose-gold))" }}
     >
       <MessageCircle className="w-4 h-4" />
-      Book a Consultation
+      {t.floatingConsult}
     </a>
   );
 }
@@ -1102,15 +1094,15 @@ function FloatingConsult() {
 /* ---------- Page ---------- */
 function LandingPage() {
   return (
-    <main className="min-h-screen bg-ivory text-charcoal">
+    <main className="min-h-screen bg-ivory text-charcoal overflow-x-hidden">
       <Nav />
       <Hero />
       <About />
       <Services />
-      <Portfolio />
+      <Experience />
       <Process />
       <WhyUs />
-      <Testimonials />
+      {/* <Testimonials /> */}
       <FAQ />
       <Contact />
       <Footer />
@@ -1118,3 +1110,4 @@ function LandingPage() {
     </main>
   );
 }
+
