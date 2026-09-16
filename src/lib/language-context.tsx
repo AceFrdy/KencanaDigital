@@ -13,7 +13,7 @@ export const translations = {
       consult: "Consult",
     },
     hero: {
-      eyebrow: "Bespoke Digital Atelier",
+      eyebrow: "Kencana Digital",
       desc: "Kencana Digital creates premium websites, enterprise software, and digital experiences designed for brands that value quality, elegance, and long-term growth.",
       ctaPrimary: "Start Your Project",
       ctaSecondary: "View Experience",
@@ -228,7 +228,7 @@ export const translations = {
       consult: "Konsultasi",
     },
     hero: {
-      eyebrow: "Bespoke Digital Atelier",
+      eyebrow: "Kencana Digital",
       desc: "Kencana Digital merancang website premium, perangkat lunak enterprise, dan pengalaman digital berkelas tinggi bagi brand yang mengutamakan kualitas, keanggunan, serta pertumbuhan jangka panjang.",
       ctaPrimary: "Mulai Proyek Anda",
       ctaSecondary: "Lihat Pengalaman",
